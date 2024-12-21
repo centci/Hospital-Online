@@ -1,0 +1,98 @@
+body{
+  background-color: #e8effd;
+}
+.main-bg{
+  background-color: #e8effd;
+  width: 100%;
+  height: 100vh;
+  background: url("../images/building-bg.jpg") top left;
+  background-size: cover;
+  position: relative;
+}
+
+a{
+  text-decoration: none;
+}
+
+nav  ul li a{
+  /* width: 110px; */
+  text-align: center;
+  border-left: solid thin #ddd;
+  border-right: solid thin #ddd;
+  /* font-size: 12px; */
+
+}
+nav ul li a:hover{
+  background-color: #dfdcdc38;
+  color: #040202 !important;
+  font-weight: 600;
+}
+.profile{
+  max-width: 1000px;
+}
+.fa{
+  margin-right: 4px;
+}
+.bi{
+  margin-right: 4px;
+}
+.fas{
+  margin-right: 4px;
+}
+.hide{
+  display: none;
+}
+
+.tb-nowrap{
+  white-space: nowrap;
+}
+
+/* custom font size and on inputs */
+.x10-font{
+  font-size: 10px;
+}
+.x11-font{
+  font-size: 11px;
+}
+.x12-font{
+  font-size: 12px;
+}
+.x13-font{
+  font-size: 13px;
+}
+.input-size{
+  /* max-width: 100px; */
+  max-height: 26px;
+  min-width: 100px;
+  /* min-height: 26px; */
+}/*End custom font size and on inputs */
+
+
+/* custom css for tableFixHead table in visit-add-request.view.php */
+.tableFixHead {
+  overflow-y: auto;
+  height: 106px;
+}
+.tableFixHead, .thead-fix .th-fix {
+  position: sticky;
+  top: 0;
+}
+.tablefix {
+  border-collapse: collapse;
+  width: 100%;
+}
+.th-fix,
+.td-fix {
+  padding: 8px 16px;
+}
+.tr-fix{
+	border: 1px solid #e8e2e2;
+}
+.th-fix {
+  background: #bbbaba;
+}/*End custom for tableFixHead table css */
+
+/* css to remove padding from table heand and body*/
+.no-padding td, .no-padding th{
+  padding: 0 !important;
+}/*End of css for remove padding from table */
