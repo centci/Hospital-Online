@@ -47,16 +47,16 @@
                   <!-- laboratory section -->
                   <div class='form-group mt-2'>
                     <label>Lab Section</label>
-                    <select class='form-control <?= isset($errors['labSecId']) ? 'border-danger' : 'border-primary';?>' name='labSecId'>
+                    <select class='form-control <?= isset($errors['testsLabSectionId']) ? 'border-danger' : 'border-primary';?>' name='testsLabSectionId'>
                       <option selected value="">Select...</option>
                       <?php if ($lab): ?>
                         <?php foreach ($lab as $row): ?>
-                          <option <?= get_select('labSecId', $row->id) ?>  value="<?= $row->id ?>"><?= $row->labname ?></option>
+                          <option <?= get_select('testsLabSectionId', $row->labSectionId) ?>  value="<?= $row->labSectionId ?>"><?= $row->labname ?></option>
                         <?php endforeach; ?>
                       <?php endif; ?>
                     </select>
                     <div class="text-danger">
-                      <?php if (isset($errors['labSecId'])): ?> <?= $errors['labSecId']?> <?php endif; ?>
+                      <?php if (isset($errors['testsLabSectionId'])): ?> <?= $errors['testsLabSectionId']?> <?php endif; ?>
                     </div>
                   </div>
                   <!-- laboratory section end -->
@@ -65,16 +65,16 @@
                     <!-- laboratory Sample type -->
                     <div class="form-group mt-2 col-md-6">
                       <label>Sample type</label>
-                      <select name="sampleid" class="form-control <?= isset($errors['sampleid']) ? 'border-danger' : 'border-primary';?>">
+                      <select name="testsSampleId" class="form-control <?= isset($errors['testsSampleId']) ? 'border-danger' : 'border-primary';?>">
                         <option selected value="">Select...</option>
                         <?php if ($sample): ?>
                           <?php foreach ($sample as $row): ?>
-                            <option <?= get_select('sampleid', $row->id) ?> value="<?= $row->id ?>"><?= $row->samplename ?></option>
+                            <option <?= get_select('testsSampleId', $row->sampleId) ?> value="<?= $row->sampleId ?>"><?= $row->samplename ?></option>
                           <?php endforeach; ?>
                         <?php endif; ?>
                       </select>
                       <div class="text-danger">
-                        <?php if (isset($errors['sampleid'])): ?> <?= $errors['sampleid']?> <?php endif; ?>
+                        <?php if (isset($errors['testsSampleId'])): ?> <?= $errors['testsSampleId']?> <?php endif; ?>
                       </div>
                     </div>
                     <!-- laboratory Sample type end-->
@@ -82,23 +82,23 @@
                     <!-- laboratory Sample Container -->
                     <div class="form-group mt-2 col-md-6">
                       <label>Sample Container</label>
-                      <select name="containerid" class="form-control <?= isset($errors['containerid']) ? 'border-danger' : 'border-primary';?>">
+                      <select name="testsContainerId" class="form-control <?= isset($errors['testsContainerId']) ? 'border-danger' : 'border-primary';?>">
                         <option selected value="">Select...</option>
                         <?php if ($container): ?>
                           <?php foreach ($container as $row): ?>
-                            <option <?= get_select('containerid', $row->id) ?> value="<?= $row->id ?>"><?= $row->containername ?></option>
+                            <option <?= get_select('testsContainerId', $row->containerId) ?> value="<?= $row->containerId ?>"><?= $row->containername ?></option>
                           <?php endforeach; ?>
                         <?php endif; ?>
                       </select>
                       <div class="text-danger">
-                        <?php if (isset($errors['containerid'])): ?> <?= $errors['containerid']?> <?php endif; ?>
+                        <?php if (isset($errors['testsContainerId'])): ?> <?= $errors['testsContainerId']?> <?php endif; ?>
                       </div>
                     </div>
                     <!-- laboratory Sample Container end-->
 
                   </div>
 
-                  <div class="row">
+                  <div class="row row-ref-unit">
                     <!-- laboratory Referance Ranges -->
                     <div class="form-group mt-2 col-md-8">
                       <input class='form-control <?= isset($errors['refRanges']) ? 'border-danger' : 'border-primary';?>' type='text' value="<?=esc(set_value('refRanges'))?>" name='refRanges' placeholder='Refrance Range'>
@@ -110,16 +110,16 @@
 
                     <!-- laboratory Tests Units-->
                     <div class="form-group mt-2 col-md-4">
-                      <select name="unitid" class="form-control <?= isset($errors['unitid']) ? 'border-danger' : 'border-primary';?>">
+                      <select name="testsUnitId" class="form-control <?= isset($errors['testsUnitId']) ? 'border-danger' : 'border-primary';?>">
                         <option selected value="">Select Test Unit..</option>
                         <?php if ($unit): ?>
                           <?php foreach ($unit as $row): ?>
-                            <option <?= get_select('unitid', $row->id) ?> value="<?= $row->id ?>"><?= $row->unitname ?></option>
+                            <option <?= get_select('testsUnitId', $row->unitId) ?> value="<?= $row->unitId ?>"><?= $row->unitname ?></option>
                           <?php endforeach; ?>
                         <?php endif; ?>
                       </select>
                       <div class="text-danger">
-                        <?php if (isset($errors['unitid'])): ?> <?= $errors['unitid']?> <?php endif; ?>
+                        <?php if (isset($errors['testsUnitId'])): ?> <?= $errors['testsUnitId']?> <?php endif; ?>
                       </div>
                     </div>
                     <!-- laboratory Tests Units end-->
@@ -207,30 +207,56 @@ function handle_results(result)
 }
 
 // =================== HANDLING TOGGALE SWITCH FOR EXTRAT TESTS ======================
+// === Existing Script for Saving ToggleSwitch State ===
 var TogglesWitch = document.querySelector('.save-togglesWitch-state');
 var ToggaleState = JSON.parse(localStorage['TOGState'] || '{}');
 
-window.addEventListener('load',function(){
-  for(var i in ToggaleState)
-  {
-    var checkboxinput = document.querySelector('input[name="' + i + '"]');
-    if (checkboxinput) checkboxinput.checked = true;
+// On page load: Apply saved toggle state and handle input disabling
+window.addEventListener('load', function () {
+  for (var i in ToggaleState) {
+    var checkboxInput = document.querySelector('input[name="' + i + '"]');
+    if (checkboxInput) {
+      checkboxInput.checked = true; // Restore the state of the toggle
+    }
   }
-  //bind click event handler
-  TogglesWitch.addEventListener('click', function(evt) {
-  // If checkboxe is checked then save to state
+  // Check if the toggle is enabled and apply the disabling logic
+  handleRowRefUnitDisabling();
+
+  // Bind the toggle's click event for state updates
+  TogglesWitch.addEventListener('click', function (evt) {
     if (this.checked) {
-      ToggaleState[this.name] = true;
+      ToggaleState[this.name] = true; // Save the toggle as "on"
+    } else if (ToggaleState[this.name]) {
+      delete ToggaleState[this.name]; // Remove toggle state as "off"
     }
-  // Else remove from state
-    else if (ToggaleState[this.name])
-    {
-      delete ToggaleState[this.name];
-    }
-  // Persist state
+    // Persist the state
     localStorage.TOGState = JSON.stringify(ToggaleState);
+
+    // Handle the disabling logic immediately after click
+    handleRowRefUnitDisabling();
   });
 });
+
+// === New Functionality for Disabling Inputs in `.row-ref-unit` ===
+function handleRowRefUnitDisabling() {
+  var toggleSwitch = document.querySelector('#toggleswitch'); // Target the toggle switch
+  var rowRefUnit = document.querySelector('.row-ref-unit'); // Target the parent div
+  var inputs = rowRefUnit.querySelectorAll('input, select, textarea'); // Get all inputs
+
+  // Check the toggle switch state from localStorage or DOM and disable/enable inputs
+  if (toggleSwitch && toggleSwitch.checked) {
+    inputs.forEach(function (input) {
+      input.disabled = true; // Disable the input
+      input.classList.add('bg-secondary'); // Optional: Add Bootstrap-styled class
+    });
+  } else {
+    inputs.forEach(function (input) {
+      input.disabled = false; // Enable the input
+      input.classList.remove('bg-secondary'); // Optional: Remove the Bootstrap class
+    });
+  }
+}
+
 // =================== HANDLING TOGGALE SWITCH FOR EXTRAT TESTS ENDZ ======================
 
 send_data({

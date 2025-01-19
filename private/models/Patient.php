@@ -4,6 +4,8 @@
  */
 class Patient extends Model
 {
+  protected $table = 'patients'; // Explicitly set the table name
+
   protected $allowedColumns = [
     'title',
     'patientId',
@@ -29,6 +31,7 @@ class Patient extends Model
   ];
   protected $afterSelect = [
     'getUserById',
+    'getDrUserById',
     'getAge'
   ];
 
@@ -130,7 +133,7 @@ class Patient extends Model
   // run function to make Patients id
   public function make_patientNo($patientNo)
   {
-    $db = New Database();
+    $db = new Database();
     $query = "SELECT id,patientId FROM patients ORDER BY id DESC LIMIT 1";
     $ptn_no = $db->query($query);
 
@@ -178,12 +181,12 @@ class Patient extends Model
   // get user by id
   public function getUserById($rows)
   {
-    $db = New Database();
+    $db = new Database();
     if (!empty($rows[0]->userId))
     {
       foreach ($rows as $key => $row)
       {
-        $query = "SELECT firstname,lastname,role,username FROM users WHERE id = :id LIMIT 1";
+        $query = "SELECT firstname,lastname,username FROM users WHERE id = :id LIMIT 1";
         $user = $db->query($query,['id'=>$row->userId]);
         if (!empty($user))
         {
@@ -194,6 +197,27 @@ class Patient extends Model
     }
     return $rows;
   }
+  // This function is specific to visit table, get Doctor role from Roles Table by drUserId from visits
+  public function getDrUserById($rows)
+  {
+    $db = new Database();
+    if (!empty($rows[0]->drUserId))
+    {
+      foreach ($rows as $key => $row)
+      {
+        $query = "SELECT firstname,lastname FROM users WHERE userId = :userId LIMIT 1";
+        $user = $db->query($query,['userId'=>$row->drUserId]);
 
+        if (!empty($user))
+        {
+
+          $rows[$key]->DrName = esc($user[0]->firstname ." ". $user[0]->lastname);
+        }
+      }
+    }
+    // show($rows);die;
+
+    return $rows;
+  }
 
 }

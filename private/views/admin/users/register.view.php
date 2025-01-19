@@ -23,7 +23,7 @@
 
     <div class="col-md-6">
       <div class="input-group">
-        <input class='form-control <?= isset($errors['lastname']) ? 'border-danger' : 'border-primary';?>' type="text" name='lastname' value="<?=set_value('firstname')?>" placeholder='Last Name'>
+        <input class='form-control <?= isset($errors['lastname']) ? 'border-danger' : 'border-primary';?>' type="text" name='lastname' value="<?=set_value('lastname')?>" placeholder='Last Name'>
       </div>
       <small class="text-danger">
         <?php if (isset($errors['lastname'])): ?> <?= $errors['lastname']?> <?php endif; ?>
@@ -48,7 +48,7 @@
       </small>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-4">
       <div class="input-group">
       <select class="form-select form-select <?= isset($errors['gender']) ? 'border-danger' : 'border-primary';?>" name="gender">
         <option <?= get_select('gender', '') ?> value="">Select Gender</option>
@@ -61,19 +61,41 @@
         </small>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-4">
       <div class="input-group">
-        <select class="form-select form-select <?= isset($errors['role']) ? 'border-danger' : 'border-primary';?>" name='role'>
+        <select
+          class="form-select form-select <?= isset($errors['role']) ? 'border-danger' : 'border-primary'; ?>" name="role">
+          <!-- Default option -->
           <option <?= get_select('role', '') ?> value="">Select Role</option>
-          <option <?= get_select('role', 'admin') ?> value="admin">Admin</option>
-          <option <?= get_select('role', 'supervisor') ?> value="supervisor">Supervisor</option>
-          <option <?= get_select('role', 'accountant') ?> value="accountant">Accountant</option>
-          <option <?= get_select('role', 'cashier') ?> value="cashier">Cashier</option>
-          <option value="user">User</option>
+          <!-- Options populated from the database -->
+          <?php if ($roleRow): ?>
+            <?php foreach ($roleRow as $role): ?>
+                <option <?= get_select("role", $role->roleId) ?> value="<?= $role->roleId ?>"> <?= $role->role ?> </option>
+            <?php endforeach; ?>
+          <?php endif; ?>
         </select>
       </div>
       <small class="text-danger">
       <?php if (isset($errors['role'])): ?> <?= $errors['role']?> <?php endif; ?>
+      </small>
+    </div>
+
+    <div class="col-md-4">
+      <div class="input-group">
+        <select
+          class="form-select form-select <?= isset($errors['specialize']) ? 'border-danger' : 'border-primary'; ?>" name="specialize">
+          <!-- Default option -->
+          <option <?= get_select('specialize', '') ?> value="">Select Role</option>
+          <!-- Options populated from the database -->
+          <?php if ($specializeRow): ?>
+            <?php foreach ($specializeRow as $specialize): ?>
+                <option <?= get_select("specialize", $specialize->specializeId) ?> value="<?= $specialize->specializeId ?>"> <?= $specialize->specialized ?> </option>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </select>
+      </div>
+      <small class="text-danger">
+      <?php if (isset($errors['specialize'])): ?> <?= $errors['specialize']?> <?php endif; ?>
       </small>
     </div>
 

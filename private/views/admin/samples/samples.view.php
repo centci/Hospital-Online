@@ -35,7 +35,7 @@
             <tr>
               <th scope="row"><?= $num ?></th>
               <td><?=$row->samplename ?></td>
-              <td><?=$row->userRow->name?></td>
+              <td><?=$row->userInfo->fullname?></td>
               <td class="text-center"><?=get_date($row->date) ?></td>
               <td class="text-end">
                 <a href="<?=ROOT?>/Samples/edit/<?=$row->id?>" class="text-primary"><i class="fa fa-edit"></i></a>|

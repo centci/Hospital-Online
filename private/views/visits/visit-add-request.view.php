@@ -158,7 +158,7 @@ function send_data(data)
 
 function handle_result(result)
 {
-  console.log(result);
+  // console.log(result);
 
   var obj = JSON.parse(result);
   //from here we have valid json

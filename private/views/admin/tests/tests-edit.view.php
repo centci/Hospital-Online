@@ -53,17 +53,17 @@
                   <!-- LAB SECTION NAME -->
                   <div class='form-group mt-2'>
                     <label>Lab Section</label>
-                    <select class='form-select border-primary' name='labSecId'>
-                      <option selected value="<?= $tests->labSecId ?>">
-                        <?= $tests->labSectionRow->labname?>
+                    <select class='form-select border-primary' name='testsLabSectionId'>
+                      <option selected value="<?= $tests->testsLabSectionId ?>">
+                        <?= $tests->labSectionInfo->labname?>
                       </option>
                       <?php if ($lab): ?>
                         <?php foreach ($lab as $row): ?>
-                          <option <?= get_select('labname', $row->labname) ?>  value="<?= $row->id ?>"><?= $row->labname ?></option>
+                          <option <?= get_select('labname', $row->labname) ?>  value="<?= $row->labSectionId ?>"><?= $row->labname ?></option>
                         <?php endforeach; ?>
                       <?php endif; ?>
                     </select>
-                    <small class="error errors-labSecId text-danger"> </small>
+                    <small class="error errors-testsLabSectionId text-danger"> </small>
                   </div>
 
                   <!-- SAMPLE TYPE And SAMPLE CONTAINER -->
@@ -71,35 +71,35 @@
                     <!-- SAMPLE TYPE -->
                     <div class="form-group mt-2 col-md-6">
                       <label>Sample type</label>
-                      <select name="sampleid" class="form-select border-primary">
-                        <option selected value="<?= $tests->sampleid ?>">
-                          <?= $tests->sampleRow->samplename ?>
+                      <select name="testsSampleId" class="form-select border-primary">
+                        <option selected value="<?= $tests->testsSampleId ?>">
+                          <?= $tests->sampleInfo->samplename ?>
                         </option>
 
                         <?php if ($sample): ?>
                           <?php foreach ($sample as $row): ?>
-                            <option <?= get_select('samplename', $row->samplename) ?> value="<?= $row->id ?>"><?= $row->samplename ?></option>
+                            <option <?= get_select('samplename', $row->samplename) ?> value="<?= $row->sampleId ?>"><?= $row->samplename ?></option>
                           <?php endforeach; ?>
                         <?php endif; ?>
                       </select>
-                      <small class="error errors-sampleid text-danger"> </small>
+                      <small class="error errors-testsSampleId text-danger"> </small>
                     </div>
 
                     <!-- SAMPLE CONTAINER -->
                     <div class="form-group mt-2 col-md-6">
                       <label>Sample Container</label>
-                      <select name="containerid" class="form-control border-primary">
-                        <option selected value="<?= $tests->containerid ?>">
-                          <?= $tests->containerRow->containername ?>
+                      <select name="testsContainerId" class="form-control border-primary">
+                        <option selected value="<?= $tests->containerInfo->containerId ?>">
+                          <?= $tests->containerInfo->containername ?>
                         </option>
 
                         <?php if ($container): ?>
                           <?php foreach ($container as $row): ?>
-                            <option <?= get_select('containername', $row->containername) ?> value="<?= $row->id ?>"><?= $row->containername ?></option>
+                            <option <?= get_select('containername', $row->containername) ?> value="<?= $row->containerId ?>"><?= $row->containername ?></option>
                           <?php endforeach; ?>
                         <?php endif; ?>
                       </select>
-                      <small class="error errors-containerid text-danger"> </small>
+                      <small class="error errors-testsContainerId text-danger"> </small>
                     </div>
                   </div><!--End Sample Type And Sample Container Div-->
 
@@ -114,18 +114,18 @@
                     <!-- TEST UNIT -->
                     <div class="form-group mt-2 col-md-4">
                       <!-- <label>Test Unit</label> -->
-                      <select name="unitid" class="form-control border-primary">
-                        <option selected value="<?= $tests->unitid ?>">
-                          <?= $tests->unitRow->unitname ?>
+                      <select name="testsUnitId" class="form-control border-primary">
+                        <option selected value="<?= $tests->unitInfo->unitId ?? " ";?>">
+                          <?= $tests->unitInfo->unitname ?? " "; ?>
                         </option>
 
                         <?php if ($unit): ?>
                           <?php foreach ($unit as $row): ?>
-                            <option <?= get_select('unitname', $row->unitname) ?> value="<?= $row->id ?>"><?= $row->unitname ?></option>
+                            <option <?= get_select('unitname', $row->unitname) ?> value="<?= $row->unitId ?>"><?= $row->unitname ?></option>
                           <?php endforeach; ?>
                         <?php endif; ?>
                       </select>
-                      <small class="error errors-unitid text-danger"> </small>
+                      <small class="error errors-testsUnitId text-danger"> </small>
                     </div>
                   </div><!--End Refrance Range And Test Unit Div-->
 
@@ -213,12 +213,12 @@
                           <td>
                             <select name="xtraUnitid_<?=$input_Num?>" class=" form-control">
                               <option selected value="<?= isset($row->xtraUnitid) ? $row->xtraUnitid : ""; ?>">
-                                <?= $row->unitRow->unitname ?>
+                                <?= $row->unitInfo->unitname ?>
                               </option>
 
                               <?php if ($unit): ?>
                                 <?php foreach ($unit as $unitrow): ?>
-                                  <option value="<?= $unitrow->id ?>"><?= $unitrow->unitname ?></option>
+                                  <option value="<?= $unitrow->unitId ?>"><?= $unitrow->unitname ?></option>
                                 <?php endforeach; ?>
                               <?php endif; ?>
                             </select>
@@ -328,22 +328,24 @@ function handle_results(result)
 
     if(obj.data_type == "save")
     {
-      alert(obj.data);
-
       //clear all errors
       var error_containers = document.querySelectorAll(".error");
       for (var i = 0; i < error_containers.length; i++)
       {
         error_containers[i].innerHTML = "";
       }
-
-      //show any errors
+      //show any errors in the form field
       if(typeof obj.errors == 'object')
       {
         for(key in obj.errors)
         {
           document.querySelector(".errors-"+key).innerHTML = obj.errors[key];
         }
+      }else //show Success message and refresh the page if no errors detected
+      if (obj.data_type == 'save' && obj.data == "Test Edited Successfully!")
+      {
+        alert('Test saved saccessfully');
+        window.location.reload();
       }
     }
   }

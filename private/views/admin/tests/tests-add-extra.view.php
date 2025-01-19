@@ -66,7 +66,7 @@
                         <option selected value="">Select Unit..</option>
                         <?php if ($unit): ?>
                           <?php foreach ($unit as $row): ?>
-                            <option <?= get_select('xtraUnitid', $row->id) ?> value="<?= $row->id ?>"><?= $row->unitname ?></option>
+                            <option <?= get_select('xtraUnitid', $row->unitId) ?> value="<?= $row->unitId ?>"><?= $row->unitname ?></option>
                           <?php endforeach; ?>
                         <?php endif; ?>
                       </select>
@@ -75,7 +75,7 @@
 
                     <!--hidden input for xtraTestCode, xtraUserId, xtraTestDate-->
                     <input type="hidden"  name="xtraTestCode_0" value="<?=esc($TestCode)?>">
-                    <input type="hidden"  name="xtraUserId_0" value="<?=esc(Auth::getId())?>">
+                    <input type="hidden"  name="xtraUserId_0" value="<?=esc(Auth::getUserId())?>">
                     <input type="hidden"  name="xtraTestDate_0" value="<?=esc(date('Y-m-d H:i:s'))?>">
                     <input type="hidden"  name="subTestCode_0" value="<?=$TestCode?>">
                     <!--hidden input for xtraTestCode, xtraUserId, xtraTestDate-->
@@ -136,7 +136,7 @@ function handle_results(result)
 
     if(obj.data_type == "save")
     {
-      alert(obj.data);
+      // alert(obj.data);
       // alert('data saved');
 
       //clear all errors
@@ -152,7 +152,11 @@ function handle_results(result)
         {
           document.querySelector(".errors-"+key).innerHTML = obj.errors[key];
         }
-
+      }else //show Success message and refresh the page if no errors detected
+      if (obj.data_type == 'save' && obj.data == "extra test saved Successfully!")
+      {
+        alert('Extra Test Saved Successfully!');
+        window.location.reload();
       }
       // else{
       //   disable_save_button(false);
@@ -195,7 +199,7 @@ function add_extra(e)
         <option selected value="">Select Unit..</option>
         <?php if ($unit): ?>
           <?php foreach ($unit as $row): ?>
-            <option <?= get_select('xtraUnitid', $row->id) ?> value="<?= $row->id ?>"><?= $row->unitname ?></option>
+            <option <?= get_select('xtraUnitid', $row->unitId) ?> value="<?= $row->unitId ?>"><?= $row->unitname ?></option>
           <?php endforeach; ?>
         <?php endif; ?>
       </select>
@@ -205,7 +209,7 @@ function add_extra(e)
 
     <!--hidden input for xtraTestCode, xtraUserId, xtraTestDate-->
     <input type="hidden"  name="xtraTestCode_${input_count}" value="<?=esc($TestCode)?>">
-    <input type="hidden"  name="xtraUserId_${input_count}" value="<?=esc(Auth::getId())?>">
+    <input type="hidden"  name="xtraUserId_${input_count}" value="<?=esc(Auth::getUserId())?>">
     <input type="hidden"  name="xtraTestDate_${input_count}" value="<?=esc(date('Y-m-d H:i:s'))?>">
     <input type="hidden"  name="subTestCode_${input_count}" value="<?=$TestCode?>">
     <!--hidden input for xtraTestCode, xtraUserId, xtraTestDate-->

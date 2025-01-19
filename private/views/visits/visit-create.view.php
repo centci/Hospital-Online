@@ -56,7 +56,7 @@
           <select name="billTo" class="form-select p-0 input-size" >
             <option class="x10-font" value="">Select..</option>
             <?php foreach ($insuranceRow as $row): ?>
-              <option class="x10-font" value="<?= $row->insur_id ?>"><?= strtoupper($row->insuranceName) ?></option>
+              <option class="x10-font" value="<?= $row->insuranceId ?>"><?= strtoupper($row->insuranceName) ?></option>
             <?php endforeach; ?>
           </select>
           <small class="js-error-billTo text-danger">
@@ -66,13 +66,13 @@
         <!-- ======================  -->
         <th class="tb-nowrap p-1 x10-font">See Specialist</th>
         <td class="text-start p-1">
-          <select name="dr_Specliz_id" class="js-specialist form-select p-0 input-size">
+          <select name="drSpeclizId" class="js-specialist form-select p-0 input-size">
             <option class="x10-font" value="">Select..</option>
             <?php foreach ($specialistRow as $row): ?>
               <option class="x10-font" value="<?= $row->id ?>"><?= ucfirst($row->specialized) ?></option>
             <?php endforeach; ?>
-          <small class="js-error-dr_Specliz_id text-danger">
-          <?php if (isset($errors['dr_Specliz_id'])): ?> <?= $errors['dr_Specliz_id']?> <?php endif; ?>
+          <small class="js-error-drSpeclizId text-danger">
+          <?php if (isset($errors['drSpeclizId'])): ?> <?= $errors['drSpeclizId']?> <?php endif; ?>
           </small>
         </td>
         <!-- ======================  -->
@@ -81,7 +81,7 @@
           <select name="departmentId" class="js-department form-select p-0 input-size">
             <option class="x10-font" value="">Select..</option>
             <?php foreach ($departmentRow as $row): ?>
-              <option class="x10-font" value="<?= $row->dept_id ?>"><?= ucfirst($row->department) ?></option>
+              <option class="x10-font" value="<?= $row->deptId ?>"><?= ucfirst($row->department) ?></option>
             <?php endforeach; ?>
           </select>
           <small class="js-error-departmentId text-danger">
@@ -115,9 +115,11 @@
         <td class="text-start p-1">
           <select name="drUserId" class="js-doctor form-select p-0 input-size">
             <option class="x10-font" value="">Select..</option>
-            <?php foreach ($doctRow as $row): ?>
-              <option class="x10-font" value="<?= $row->id ?>"><?= "Dr. ".ucfirst($row->firstname) ?></option>
-            <?php endforeach; ?>
+            <?php if ($doctRow): ?>
+              <?php foreach ($doctRow as $row): ?>
+                <option class="x10-font" value="<?= $row->id ?>"><?= "Dr. ".ucfirst($row->firstname) ?></option>
+              <?php endforeach; ?>
+            <?php endif; ?>
           </select>
           <small class="js-error-drUserId text-danger">
           <?php if (isset($errors['drUserId'])): ?> <?= $errors['drUserId']?> <?php endif; ?>

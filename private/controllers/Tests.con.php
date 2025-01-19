@@ -14,11 +14,11 @@ class Tests extends Controller
       $this->redirect('login');
     }
 
-    $test = New Test();
+    $test = new Test();
     $errors = [];
     // view all saved Tests in the database
-    $Rows = $test->findAll();
-
+    $viewAllSavedTests = $test->findAll();
+    // show($Rows);die;
     require $this->viewsPath("admin/Tests/tests");
   }
 
@@ -30,19 +30,18 @@ class Tests extends Controller
       warrningMessage('You Must Be An Admin To Access This Page!');
       $this->redirect('login');
     }
-
-    $test = New Test();
-    $labSec = New LabSection();
-    $samples = New Sample();
-    $containers = New Container();
-    $units = New Unit();
+    $errors = [];
+    $test = new Test();
+    $labSec = new LabSection();
+    $samples = new Sample();
+    $containers = new Container();
+    $units = new Unit();
 
     $lab = $labSec->findAll();
     $sample = $samples->findAll();
     $container = $containers->findAll();
     $unit = $units->findAll();
 
-    $errors = [];
     if($_SERVER['REQUEST_METHOD'] == "POST")
     {
       if (isset($_POST['toggleswitch']))
@@ -54,7 +53,8 @@ class Tests extends Controller
       // validating of forms
       if ($test->validate($_POST))
       {
-        $_POST['userId'] = Auth::getId();
+
+        $_POST['testsUserId'] = Auth::getUserId();
         $_POST['testDate'] = date('Y-m-d H:i:s');
 
         // INSERT INTO GENERAL TEST TABLE
@@ -86,10 +86,11 @@ class Tests extends Controller
       warrningMessage('You Must Be An Admin To Access This Page!');
       $this->redirect('login');
     }
-    $test = New Test();
-    $units = New Unit();
-    $db = New Database();
+    $test = new Test();
+    $units = new Unit();
+    $db = new Database();
     $unit = $units->findAll();
+
     // make sub Test Code
     $testCode['testCode']  = 'LAB'."0001";
     $TestCode = make_subTestCode($testCode);
@@ -97,6 +98,7 @@ class Tests extends Controller
     $errors = [];
     if($_SERVER['REQUEST_METHOD'] == "POST")
     {
+
       if(!empty($_POST['data_type']) && $_POST['data_type'] == "save")
       {
         // validating of forms
@@ -197,13 +199,13 @@ class Tests extends Controller
     }
 
     $errors = [];
-    $test = New Test();
-    $labSec = New LabSection();
-    $samples = New Sample();
-    $containers = New Container();
-    $units = New Unit();
-    $extratest = New ExtraTest();
-    $db = New Database();
+    $test = new Test();
+    $labSec = new LabSection();
+    $samples = new Sample();
+    $containers = new Container();
+    $units = new Unit();
+    $extratest = new ExtraTest();
+    $db = new Database();
 
     $lab = $labSec->findAll();
     $sample = $samples->findAll();
@@ -220,6 +222,7 @@ class Tests extends Controller
     }
 
     $testxtra = $extratest->where('xtraTestCode',$tests->testCode);
+    // show($testxtra);die;
 
     if($_SERVER['REQUEST_METHOD'] == "POST")
     {
@@ -304,10 +307,10 @@ class Tests extends Controller
       $this->redirect('login');
     }
 
-    $units = New Unit();
-    $extratest = New ExtraTest();
-    $test = New Test();
-    $db = New Database();
+    $units = new Unit();
+    $extratest = new ExtraTest();
+    $test = new Test();
+    $db = new Database();
 
     // extracting tests units
     $unit = $units->findAll();
@@ -431,7 +434,7 @@ class Tests extends Controller
       $this->redirect('login');
     }
     $errors = [];
-    $test = New Test();
+    $test = new Test();
     $row = $test->first('id',$id);
 
     $test->delete($id);

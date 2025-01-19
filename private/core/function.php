@@ -1,12 +1,12 @@
 <?php
-
+// print_readerbale function
 function show($data)
 {
   echo "<pre>";
   print_r($data);
   echo "</pre>";
 }
-
+// function to escape or remove unwanted character in the form
 function esc($str)
 {
   return nl2br(htmlspecialchars($str));
@@ -20,19 +20,21 @@ function set_value($key, $default ='')
   }
   return $default;
 }
-
-function get_select($key, $vlaue)
+// function to return selected value back incase of any errors in the form
+function get_select($key, $value)
 {
-	if (isset($_POST[$key]))
-	{
-		if ($_POST[$key] == $vlaue)
-		{
-			return "selected";
-		}
-	}
-
-	return "";
+  // Check if the form was submitted and if the key exists in the submitted data
+  if (isset($_POST[$key]))
+  {
+    // Compare the submitted value for the key with the provided value
+    if ($_POST[$key] == $value)
+    {
+        return "selected"; // Indicate that this option should be selected
+    }
+  }
+  return ""; // Default return value (no "selected" attribute)
 }
+
 // success message
 function message($msg = '', $erase = false)
 {
@@ -86,77 +88,65 @@ function num_date($date)
 // crop image function
 function resize_image($filename, $max_size = 700)
 {
+    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
-  $ext = explode(".", $filename);
-  $ext = strtolower(end($ext));
+    if (!file_exists($filename)) {
+        return false; // Return false if the file does not exist
+    }
 
-  if (file_exists($filename))
-  {
+    // Create image from file based on extension
     switch ($ext) {
-      case 'png':
-        $image = imagecreatefrompng($filename);
-        break;
-
-      case 'gif':
-        $image = imagecreatefromgif($filename);
-        break;
-
-      case 'jpg':
-      case 'jpeg':
-        $image = imagecreatefromjpeg($filename);
-        break;
-
-      default:
-        $image = imagecreatefromjpeg($filename);
-        break;
+        case 'png':
+            $image = imagecreatefrompng($filename);
+            break;
+        case 'gif':
+            $image = imagecreatefromgif($filename);
+            break;
+        case 'jpg':
+        case 'jpeg':
+            $image = imagecreatefromjpeg($filename);
+            break;
+        default:
+            return false; // Return false for unsupported formats
     }
 
     $src_w = imagesx($image);
     $src_h = imagesy($image);
 
-    if ($src_w > $src_h)
-    {
-      $dst_w = $max_size;
-      $dst_h = ($src_h / $src_w) * $max_size;
-    }
-    else
-    {
-      $dst_w = ($src_w / $src_h) * $max_size;
-      $dst_h = $max_size;
+    // Calculate dimensions for the resized image
+    if ($src_w > $src_h) {
+        $dst_w = $max_size;
+        $dst_h = ($src_h / $src_w) * $max_size;
+    } else {
+        $dst_h = $max_size;
+        $dst_w = ($src_w / $src_h) * $max_size;
     }
 
+    // Create a new true color image with the calculated dimensions
     $dst_image = imagecreatetruecolor($dst_w, $dst_h);
-
     imagecopyresampled($dst_image, $image, 0, 0, 0, 0, $dst_w, $dst_h, $src_w, $src_h);
 
-    imagedestroy($image);
-
-    imagejpeg($dst_image,$filename,70);
-
+    // Output the image to the original file
     switch ($ext) {
-      case 'png':
-        imagepng($dst_image,$filename);
-        break;
-
-      case 'gif':
-        imagegif($dst_image,$filename);
-        break;
-
-      case 'jpg':
-      case 'jpeg':
-        imagejpeg($dst_image,$filename,70);
-        break;
-
-      default:
-        imagejpeg($dst_image,$filename,70);
-        break;
+        case 'png':
+            imagepng($dst_image, $filename);
+            break;
+        case 'gif':
+            imagegif($dst_image, $filename);
+            break;
+        case 'jpg':
+        case 'jpeg':
+            imagejpeg($dst_image, $filename, 70);
+            break;
     }
 
+    // Free memory
+    imagedestroy($image);
     imagedestroy($dst_image);
 
-  }
-  return $filename;
+    return $filename; // Return the filename on success
 }
+
 
 //function to Make Randome String ID
 function random_string($length)
@@ -203,7 +193,7 @@ function RemoveSpecialChar($array)
 // make subtest code
 function make_subTestCode($testCode)
 {
-  $db = New Database();
+  $db = new Database();
   $query = "SELECT testCode FROM tests ORDER BY id DESC LIMIT 1";
   $Tcode = $db->query($query);
 

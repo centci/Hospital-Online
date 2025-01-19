@@ -4,13 +4,16 @@
  */
 class LabRequest extends Model
 {
+  protected $table = 'labRequests'; // Explicitly set the table name
+
   protected $allowedColumns = [
 // saving item to tabel laboratorys
   'labReqSampleId',
-  'labReqPtn_id',
+  'labReqPatientId',
+  'labReqVisitId',
   'labReqTestCode',
-  'LabReqFinaceReceipt',
-  'labReqSaved_by',
+  'LabReqCashierSavedReceiptNo',
+  'labReqSavedByUserId',
   'DrawnDate',
   ];
 }

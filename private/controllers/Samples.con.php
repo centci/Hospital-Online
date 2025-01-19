@@ -14,8 +14,8 @@ class Samples extends Controller
       $this->redirect('login');
     }
 
-    $samples = New Sample();
-    $errors = [];
+    $samples = new Sample();
+
     // view all saved Samples in the database
     $data = $samples->findAll();
 
@@ -31,13 +31,13 @@ class Samples extends Controller
       $this->redirect('login');
     }
 
-    $samples = New Sample();
+    $samples = new Sample();
     $errors = [];
     if($_SERVER['REQUEST_METHOD'] == "POST")
     {
       if ($samples->validate($_POST))
       {
-        $_POST['userId'] = Auth::getId();
+        $_POST['sampleUserId'] = Auth::getUserId();
         $_POST['date'] = date('Y-m-d H:i:s');
         $samples->insert($_POST);
         message('Sample Successfully Saved!');
@@ -61,7 +61,7 @@ class Samples extends Controller
       $this->redirect('login');
     }
     $errors = [];
-    $samples = New Sample();
+    $samples = new Sample();
     $row = $samples->first('id',$id);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")
@@ -89,7 +89,7 @@ class Samples extends Controller
       $this->redirect('login');
     }
     $errors = [];
-    $samples = New Sample();
+    $samples = new Sample();
     $row = $samples->first('id',$id);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")

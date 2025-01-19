@@ -4,4 +4,4 @@ define("ABSPATH", true);
 
 require "../private/core/autoload.php";
 
-$app = New App();
+$app = new App();

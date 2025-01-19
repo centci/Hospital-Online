@@ -93,7 +93,7 @@ function send_data(data)
 // handle results coming from controller
 function handle_result(result)
 {
-  console.log(result);
+  // console.log(result);
 
   let obj = JSON.parse(result);
   //from here we have valid json
@@ -106,9 +106,14 @@ function handle_result(result)
         // update LAB_ITEMS_DETAILS by adding obj.data to it
         LAB_ITEMS_DETAILS = [];
         LAB_ITEMS_DETAILS = obj.data;
-
         refresh_tests_display();
       }
+    }
+
+    if (obj.data_type == 'submit_items' && obj.data == "saved saccessfully")
+    {
+      alert('saved saccessfully');
+      window.location.reload();
     }
   }
 }
@@ -188,8 +193,9 @@ function labItemSubmit(e)
     tmp_tests.cashierSavedReceiptNo = LAB_ITEMS_DETAILS[i].cashierSavedReceiptNo;
     tmp_tests.testCode = LAB_ITEMS_DETAILS[i].testCode;
     tmp_tests.patientId = LAB_ITEMS_DETAILS[i].patientId;
+    tmp_tests.pendingPayVisitId = LAB_ITEMS_DETAILS[i].pendingPayVisitId;
+
     LAB_ITEM_TO_INSERT.push(tmp_tests);
-    // console.log(LAB_ITEM_TO_INSERT);
   }
 
   send_data({

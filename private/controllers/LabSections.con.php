@@ -14,12 +14,11 @@ class LabSections extends Controller
       $this->redirect('login');
     }
 
-    $labSec = New LabSection();
-    $user = New User();
+    $labSec = new LabSection();
+    $user = new User();
     $errors = [];
     // view all saved lab department in the database
     $data = $labSec->findAll();
-
     // show($data);die;
 
     require $this->viewsPath("admin/labsections/lab-section");
@@ -34,13 +33,13 @@ class LabSections extends Controller
       $this->redirect('login');
     }
 
-    $labSec = New LabSection();
+    $labSec = new LabSection();
     $errors = [];
     if($_SERVER['REQUEST_METHOD'] == "POST")
     {
       if ($labSec->validate($_POST))
       {
-        $_POST['userId'] = Auth::getId();
+        $_POST['labSectionUserId'] = Auth::getUserId();
         $_POST['date'] = date('Y-m-d H:i:s');
         $labSec->insert($_POST);
         message('Lab Section Successfully Saved!');
@@ -64,7 +63,7 @@ class LabSections extends Controller
       $this->redirect('login');
     }
     $errors = [];
-    $labSec = New LabSection();
+    $labSec = new LabSection();
     $row = $labSec->first('id',$id);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")
@@ -92,7 +91,7 @@ class LabSections extends Controller
       $this->redirect('login');
     }
     $errors = [];
-    $labSec = New LabSection();
+    $labSec = new LabSection();
     $row = $labSec->first('id',$id);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")

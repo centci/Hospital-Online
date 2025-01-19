@@ -4,6 +4,8 @@
  */
 class Visit extends Model
 {
+  protected $table = 'visits'; // Explicitly set the table name
+
   protected $allowedColumns = [
     'visit_Id',
     'patientId',
@@ -11,7 +13,7 @@ class Visit extends Model
     'billTo',
     'billMode',
     'insuranceNo',
-    'dr_Specliz_id',
+    'drSpeclizId',
     'departmentId',
     'drUserId',
     'userId',
@@ -60,9 +62,9 @@ class Visit extends Model
       if ($DATA['visitCat'] == "consultation")
       {
         // Validate Specialist
-        if (empty($DATA['dr_Specliz_id']))
+        if (empty($DATA['drSpeclizId']))
         {
-          $this->errors['dr_Specliz_id'] = "Specialist Required!";
+          $this->errors['drSpeclizId'] = "Specialist Required!";
         }
         // Validate Doctor
         if (empty($DATA['drUserId']))
@@ -119,12 +121,12 @@ class Visit extends Model
   {
     // show($rows);die;
 
-    $db = New Database();
+    $db = new Database();
     if (!empty($rows[0]->userId))
     {
       foreach ($rows as $key => $row)
       {
-        $query = "SELECT firstname,lastname,role,username FROM users WHERE id = :id LIMIT 1";
+        $query = "SELECT firstname,lastname,username FROM users WHERE id = :id LIMIT 1";
         $user = $db->query($query,['id'=>$row->userId]);
         if (!empty($user))
         {
@@ -139,7 +141,7 @@ class Visit extends Model
   public function insuranceInfoById($rows)
   {
     // show($rows[0]->billTo);die;
-    $db = New Database();
+    $db = new Database();
     if (!empty($rows[0]->billTo))
     {
       foreach ($rows as $key => $row)
@@ -158,7 +160,7 @@ class Visit extends Model
   // get patients by patientId
   public function patientInfo($rows)
   {
-    $db = New Database();
+    $db = new Database();
     if (!empty($rows[0]->patientId))
     {
       foreach ($rows as $key => $row)
@@ -180,7 +182,7 @@ class Visit extends Model
   public function departmentInfo($rows)
   {
     // show($rows);die;
-    $db = New Database();
+    $db = new Database();
     if (!empty($rows))
     {
       foreach ($rows as $key => $row)
@@ -200,7 +202,7 @@ class Visit extends Model
   // get Sample by sampleid
   public function test_sample($rows)
   {
-    $db = New Database();
+    $db = new Database();
     if (!empty($rows[0]->sampleid))
     {
       foreach ($rows as $key => $row)
@@ -219,7 +221,7 @@ class Visit extends Model
   // get Sample Container by containerid
   public function sample_container($rows)
   {
-    $db = New Database();
+    $db = new Database();
     if (!empty($rows[0]->containerid))
     {
       foreach ($rows as $key => $row)

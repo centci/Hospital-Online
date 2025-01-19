@@ -14,7 +14,7 @@ class Units extends Controller
       $this->redirect('login');
     }
 
-    $units = New Unit();
+    $units = new Unit();
     $errors = [];
     // view all saved Units in the database
     $data = $units->findAll();
@@ -31,13 +31,13 @@ class Units extends Controller
       $this->redirect('login');
     }
 
-    $units = New Unit();
+    $units = new Unit();
     $errors = [];
     if($_SERVER['REQUEST_METHOD'] == "POST")
     {
       if ($units->validate($_POST))
       {
-        $_POST['userId'] = Auth::getId();
+        $_POST['unitUserId'] = Auth::getUserId();
         $_POST['date'] = date('Y-m-d H:i:s');
         $units->insert($_POST);
         message('Unit Successfully Saved!');
@@ -61,7 +61,7 @@ class Units extends Controller
       $this->redirect('login');
     }
     $errors = [];
-    $units = New Unit();
+    $units = new Unit();
     $row = $units->first('id',$id);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")
@@ -89,7 +89,7 @@ class Units extends Controller
       $this->redirect('login');
     }
     $errors = [];
-    $units = New Unit();
+    $units = new Unit();
     $row = $units->first('id',$id);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")

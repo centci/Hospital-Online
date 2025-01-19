@@ -28,7 +28,7 @@
 				<img src="<?=$image?>" alt="User Profile" class="d-block mx-auto card-img-top" alt="Profile image">
       <div class="card-body">
         <h6 class="card-title" style="font-size: 10px;"><?=ucfirst($row->firstname." ".$row->lastname)?></h6>
-        <h6 class="card-text" style="font-size: 9px; color: #000;"><b>Rank: <?=ucfirst($row->role)?></b> </h6>
+				<h6 class="card-text" style="font-size: 9px; color: #000;"><b>Rank: <?=ucfirst($row->roleRow->role)?></b> </h6>
       </div>
       </a>
     </div>

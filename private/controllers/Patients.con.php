@@ -11,7 +11,7 @@ class Patients extends Controller
     if (!Auth::logged_in()) {
       $this->redirect('login');
     }
-    $patient = New Patient();
+    $patient = new Patient();
     $ptn = $patient->findAll();
 
     require $this->viewsPath("patients/patients");
@@ -23,13 +23,13 @@ class Patients extends Controller
     if (!Auth::logged_in()) {
       $this->redirect('login');
     }
-    $patient = New Patient();
+    $patient = new Patient();
 
     if($_SERVER['REQUEST_METHOD'] == "POST")
     {
       if ($patient->validate($_POST))
       {
-        $_POST['userId'] = Auth::getId();
+        $_POST['userId'] = Auth::getUserId();
         $_POST['date'] = date('Y-m-d H:i:s');
 
         $patient->insert($_POST);
@@ -50,7 +50,7 @@ class Patients extends Controller
     if (!Auth::logged_in()) {
       $this->redirect('login');
     }
-    $patient = New Patient();
+    $patient = new Patient();
     $row = $patient->first('id',$id);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")
@@ -74,7 +74,7 @@ class Patients extends Controller
       $this->redirect('login');
     }
 
-    $patient = New Patient();
+    $patient = new Patient();
     $row = $patient->first('id',$id);
     // show($row);die;
 

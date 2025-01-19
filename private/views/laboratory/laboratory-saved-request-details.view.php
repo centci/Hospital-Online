@@ -63,7 +63,7 @@
         <input type="hidden" class="form-control" name="reportLabReqSampleId" value="<?= $labReqSampleId ?>" readonly>
         <input type="hidden" class="form-control js-reportTestCode" name="reportTestCode" value="" readonly>
         <input type="hidden"  name="labReportId" value="<?=esc(random_string(10))?>" readonly>
-        <input type="hidden"  name="reportUserId" value="<?=esc(Auth::getId())?>" readonly>
+        <input type="hidden"  name="reportUserId" value="<?=esc(Auth::getUserId())?>" readonly>
         <input type="hidden"  name="reportDate" value="<?=esc(date('Y-m-d H:i:s'))?>" readonly>
 
       </div>
@@ -191,16 +191,16 @@ function handle_results(results)
       if(obj.data_type == "save")
       {
         // HANDLING ERROR AND DISPLAYING ITS MESSAGE ACCORDINGLY
-        alert(obj.data);
-
-        //clear all errors if all goes well
+        //And clear all errors if all goes well
         var error_containers = document.querySelectorAll(".error");
+        
         for (var i = 0; i < error_containers.length; i++) {
           error_containers[i].innerHTML = "";
         }
         //Refreshing the page if there is no error or if result has been Successfully saved
         if(typeof obj.errors != 'object')
         {
+          alert(obj.data);
           window.location.reload();
         }
         //show any errors if any.
@@ -311,7 +311,7 @@ function xtraTest_HTML(data,index)
     <td class="td-fix tb-nowrap text-end">Report</td>
 
     <input type="hidden"  name="extraTestReportId_${index}" value="<?=esc(random_string(10))?>">
-    <input type="hidden"  name="extraTestReportBy_${index}" value="<?=esc(Auth::getId())?>">
+    <input type="hidden"  name="extraTestReportBy_${index}" value="<?=esc(Auth::getUserId())?>">
     <input type="hidden"  name="extraTestReportDate_${index}" value="<?=esc(date('Y-m-d H:i:s'))?>">
 
   </tr>

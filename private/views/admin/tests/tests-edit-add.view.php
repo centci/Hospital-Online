@@ -159,7 +159,7 @@ function add_extra()
 
     <!--hidden input for xtraTestCode, xtraUserId, xtraTestDate-->
     <input type="hidden"  name="xtraTestCode_${input_count}" value="<?=esc($xtraTestCode)?>">
-    <input type="hidden"  name="xtraUserId_${input_count}" value="<?=esc(Auth::getId())?>">
+    <input type="hidden"  name="xtraUserId_${input_count}" value="<?=esc(Auth::getUserId())?>">
     <input type="hidden"  name="xtraTestDate_${input_count}" value="<?=esc(date('Y-m-d H:i:s'))?>">
     <!--hidden input for xtraTestCode, xtraUserId, xtraTestDate endz-->
 

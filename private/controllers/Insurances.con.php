@@ -14,11 +14,11 @@ class Insurances extends Controller
       $this->redirect('login');
     }
 
-    $insurances = New Insurance();
+    $insurances = new Insurance();
     $errors = [];
     // view all saved Insurance in the database
     $data = $insurances->findAll();
-
+// show($data);die;
     require $this->viewsPath("admin/settings/insurance");
   }
 
@@ -31,13 +31,13 @@ class Insurances extends Controller
       $this->redirect('login');
     }
 
-    $insurances = New Insurance();
+    $insurances = new Insurance();
     $errors = [];
     if($_SERVER['REQUEST_METHOD'] == "POST")
     {
       if ($insurances->validate($_POST))
       {
-        $_POST['userId'] = Auth::getId();
+        $_POST['insuranceUserId'] = Auth::getUserId();
         $_POST['date'] = date('Y-m-d H:i:s');
         $insurances->insert($_POST);
         message('Insurance Successfully Saved!');
@@ -61,7 +61,7 @@ class Insurances extends Controller
       $this->redirect('login');
     }
     $errors = [];
-    $insurances = New Insurance();
+    $insurances = new Insurance();
     $row = $insurances->first('id',$id);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")
@@ -89,7 +89,7 @@ class Insurances extends Controller
       $this->redirect('login');
     }
     $errors = [];
-    $insurances = New Insurance();
+    $insurances = new Insurance();
     $row = $insurances->first('id',$id);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")

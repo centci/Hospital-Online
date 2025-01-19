@@ -4,11 +4,13 @@
  */
 class Container extends Model
 {
+
+  protected $table = "containers";
   protected $allowedColumns = [
     'containername',
-    'userId',
+    'containerUserId',
     'date',
-    'cont_id',
+    'containerId',
   ];
 
   protected $afterSelect = [
@@ -16,7 +18,7 @@ class Container extends Model
   ];
 
   protected $beforeInsert = [
-    'make_cont_id',
+    'makeContainerId',
   ];
 
   // form validation before inserting data
@@ -39,38 +41,49 @@ class Container extends Model
   }
 
   // get user by id
-  public function getUserById($rows)
-  {
-    $db = New Database();
-    if (!empty($rows[0]->userId))
-    {
-      foreach ($rows as $key => $row)
-      {
-        $query = "SELECT firstname,lastname,role,username FROM users WHERE id = :id LIMIT 1";
-        $user = $db->query($query,['id'=>$row->userId]);
-        if (!empty($user))
-        {
-          $user[0]->name = esc($user[0]->firstname ." ". $user[0]->lastname);
-          $rows[$key]->userRow = $user[0];
-        }
-      }
-    }
-    return $rows;
+// =======================================================================================================
+// Function to get user information by ID, enriched with relational data
+  public function getUserById($rows) {
+
+    $result = $this->getRelatedData(
+      $rows,                  // The existing dataset
+      'users',                // Related table name where we are looking for user information
+      'userId',               // Column in `users` table
+      'containerUserId',      // Column in $rows for matching one in users table
+      ['userId', 'firstname', 'lastname'], // Fields to retrieve from the related/users table
+      ['userId', 'firstname', 'lastname'], // Allowed fields to validate requested fields
+      'userInfo',              // Key where related info will be attached
+      'USR-'                   /* prefix for userId here if needed, just incase database userId = 12 instead
+                                  of USR-002   */
+    );
+    return $result;
   }
 
-// Make extra Container id
-  public function make_cont_id($id)
-  {
-    $db = New Database();
-    $query = "SELECT * FROM containers ORDER BY id DESC LIMIT 1";
-    $contId = $db->query($query);
-    if (empty($contId))
-    {
-      $id['cont_id'] = 1;
-    }
-    else {
-      $id['cont_id'] = $contId[0]->cont_id + 1;
-    }
-    return $id;
+// ==========================================================================================
+// Make extra Containe Id
+  /**
+   * Automatically generates a unique containerId before inserting a new record.
+   * This function is used as a hook in the `beforeInsert` array.
+   *
+   * @param array $data Input data for the new record (associative array).
+   * @return array Modified data array with the unique `containerId` added.
+   */
+  public function makeContainerId($data){
+    // Define allowed columns specific to this operation
+    $allowedColumns = ['containerId'];
+    // Step 1: Generate a unique containerId
+    // Calls the `generateUniqueId` function to create a unique ID for the 'containerId' field.
+    // The prefix 'CON-' ensures all containerIds follow the format "CON-XXX".
+    $newContainerId = $this->generateUniqueId('containerId', 'CON', $allowedColumns);
+
+    // Step 2: Add the generated containerId to the data array
+    // The generated ID is assigned to the `containerId` key in the `$data` array.
+    $data['containerId'] = $newContainerId;
+// show($data);die;
+    // Step 3: Return the modified data array
+    // The updated `$data` array now includes the generated `containerId`.
+    // Returning this array ensures the ID will be part of the data when it gets inserted into the database.
+    return $data;
   }
+// ==========================================================================================
 }

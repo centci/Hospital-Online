@@ -4,6 +4,8 @@
  */
 class PendingPayment extends Model
 {
+  protected $table = 'pendingPayments'; // Explicitly set the table name
+
   protected $allowedColumns = [
   // saving item to tabel pendingPayments
     'pendingPayId',
@@ -30,7 +32,7 @@ class PendingPayment extends Model
   {
     // show($rows);die;
 
-    $db = New Database();
+    $db = new Database();
     if (!empty($rows))
     {
       foreach ($rows as $key => $row)
@@ -52,12 +54,12 @@ class PendingPayment extends Model
   {
     // show($rows);die;
 
-    $db = New Database();
+    $db = new Database();
     if (!empty($rows))
     {
       foreach ($rows as $key => $row)
       {
-        $query = "SELECT firstname,lastname,role,username FROM users WHERE id = :sentBy LIMIT 1";
+        $query = "SELECT firstname,lastname,username FROM users WHERE id = :sentBy LIMIT 1";
         $user = $db->query($query,['sentBy'=>$row->sentBy]);
         if (!empty($user))
         {

@@ -22,7 +22,7 @@ class App
       die;
     }
     require "../private/controllers/".$this->controller.".con.php";
-    $this->controller = New $this->controller();
+    $this->controller = new $this->controller();
     if (isset($URL[1]))
     {
       if (method_exists($this->controller, $URL[1]))

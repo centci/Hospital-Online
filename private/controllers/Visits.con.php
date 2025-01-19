@@ -14,7 +14,7 @@ public function index($id = null)
   {
     $this->redirect('home');
   }
-  $visit = New Visit();
+  $visit = new Visit();
   $rows = $visit->query("SELECT * FROM Visits WHERE visitCat ='consultation'");
 
   require $this->viewsPath("visits/visit-consultation");
@@ -28,7 +28,7 @@ public function selfrequest($visit_Id = null,$patientId = null)
   {
     $this->redirect('home');
   }
-  $visit = New Visit();
+  $visit = new Visit();
   $rows = $visit->query("SELECT * FROM Visits WHERE visitCat ='self request'");
 
   require $this->viewsPath("visits/visit-self-request");
@@ -41,7 +41,7 @@ public function search($id = null)
   {
     $this->redirect('home');
   }
-  $patient = New Patient();
+  $patient = new Patient();
   $row_data = file_get_contents("php://input");
 
   if($_SERVER['REQUEST_METHOD'] == "POST")
@@ -80,15 +80,15 @@ public function create($id = null)
   {
     $this->redirect('home');
   }
-  $visits = New Visit();
-  $patient = New Patient();
-  $doctors = New User();
-  $specialization = New Specialization();
-  $department = New Department();
-  $insurance = New Insurance();
+  $visits = new Visit();
+  $patient = new Patient();
+  $doctors = new Role();
+  $specialization = new Specialization();
+  $department = new Department();
+  $insurance = new Insurance();
 
   $row = $patient->first('patientId',$id);
-  $doctRow = $doctors->where('role','admin');
+  $doctRow = $doctors->where('role','doctor');
   $specialistRow = $specialization->findAll();
   $departmentRow = $department->findAll();
   $insuranceRow = $insurance->findAll();
@@ -97,7 +97,7 @@ public function create($id = null)
   {
     if ($visits->validate($_POST))
     {
-      $_POST['userId'] = Auth::getId();
+      $_POST['userId'] = Auth::getUserId();
       $_POST['VisitDate'] = date('Y-m-d H:i:s');
       $_POST['visit_Id'] = random_string(10);
 
@@ -123,8 +123,8 @@ public function addvisitrequest($visit_Id = null)
     $this->redirect('home');
   }
 
-  $visits = New Visit();
-  $testRow = New Test();
+  $visits = new Visit();
+  $testRow = new Test();
 
   $visitAndPatientRow = $visits->query("SELECT visits.visit_Id, patients.patientId, visits.VisitDate, visits.departmentId FROM visits JOIN patients ON visits.patientId = patients.patientId WHERE visits.visit_Id = '$visit_Id'");
   $row = $visitAndPatientRow[0];
@@ -166,11 +166,11 @@ public function addvisitrequest($visit_Id = null)
         else
         if ($OBJ['data_type'] == "submit_test")
         {
-          $pendingpayment = New PendingPayment();
+          $pendingpayment = new PendingPayment();
 
           $receipt_no 		= 	random_string(10);
           $testData = $OBJ['text'];
-          $loggedinUser = $_POST['userId'] = Auth::getId();
+          $loggedinUser = $_POST['userId'] = Auth::getUserId();
           $dateRecorded = $_POST['pendingPayDate'] = date('Y-m-d H:i:s');
           $ptnInfo = $row;
 

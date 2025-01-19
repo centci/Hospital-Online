@@ -14,7 +14,7 @@ class Specializations extends Controller
       $this->redirect('login');
     }
 
-    $specialized = New Specialization();
+    $specialized = new Specialization();
     $errors = [];
     // view all saved Specialization in the database
     $data = $specialized->findAll();
@@ -31,13 +31,13 @@ class Specializations extends Controller
       $this->redirect('login');
     }
 
-    $specialized = New Specialization();
+    $specialized = new Specialization();
     $errors = [];
     if($_SERVER['REQUEST_METHOD'] == "POST")
     {
       if ($specialized->validate($_POST))
       {
-        $_POST['userId'] = Auth::getId();
+        $_POST['specializeUserId'] = Auth::getUserId();
         $_POST['date'] = date('Y-m-d H:i:s');
         $specialized->insert($_POST);
         message('Specialization Successfully Saved!');
@@ -61,7 +61,7 @@ class Specializations extends Controller
       $this->redirect('login');
     }
     $errors = [];
-    $specialized = New Specialization();
+    $specialized = new Specialization();
     $row = $specialized->first('id',$id);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")
@@ -89,7 +89,7 @@ class Specializations extends Controller
       $this->redirect('login');
     }
     $errors = [];
-    $specialized = New Specialization();
+    $specialized = new Specialization();
     $row = $specialized->first('id',$id);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")

@@ -1,9 +1,12 @@
 <?php require $this->viewsPath('admin/head_foot/admin-header'); ?>
 <div class="col-lg-12">
-
-  <h4 class="breadcrumb-item">Hospital Departments</h4>
-
   <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h3 class="mb-0">Hospital Departments</h3> <!-- Use `mb-0` to remove default margin -->
+      <a href="<?=ROOT ?>/Departments/add">
+        <button class="btn btn-primary"><i class="fa fa-plus"></i>Add</button>
+      </a>
+    </div>
     <div class="card-body">
 
       <?php if (message()): ?><!-- Success message. -->
@@ -13,10 +16,6 @@
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       <?php endif; ?><!-- Success message end. -->
-
-        <a href="<?=ROOT ?>/Departments/add">
-          <button class="btn btn-primary my-2 float-end"><i class="fa fa-plus"></i>Add</button>
-        </a>
 
       <!-- Table with hoverable rows -->
       <table class="table table-hover table-stripped">
@@ -36,7 +35,7 @@
             <tr>
               <th scope="row"><?= $num ?></th>
               <td><?=$row->department ?></td>
-              <td><?=$row->userRow->name?></td>
+              <td><?=$row->userInfo->fullname?></td>
               <td class="text-center"><?=get_date($row->date) ?></td>
               <td class="text-end">
                 <a href="<?=ROOT?>/departments/edit/<?=$row->id?>" class="text-primary"><i class="fa fa-edit"></i></a>|
@@ -52,7 +51,9 @@
         </tbody>
       </table>
       <!-- End Table with hoverable rows -->
-
+    </div>
+    <div class="card-footer d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">footer</h5> <!-- Use `mb-0` to remove default margin -->
     </div>
   </div>
 </div>

@@ -34,8 +34,6 @@
             <th class="tb-nowrap">Tests</th>
             <th class="tb-nowrap">Section</th>
             <th class="tb-nowrap">Sample</th>
-            <th class="tb-nowrap">Ranges</th>
-            <th class="tb-nowrap">Unit</th>
             <th class="tb-nowrap">Status</th>
             <th class="tb-nowrap text-end">Created By</th>
             <th class="tb-nowrap">Created Date</th>
@@ -44,21 +42,19 @@
         </thead>
 
         <tbody>
-          <?php if ($Rows): ?>
-            <?php $num = 0;  foreach ($Rows as $row): $num++; ?>
+          <?php if ($viewAllSavedTests): ?>
+            <?php $num = 0;  foreach ($viewAllSavedTests as $row): $num++; ?>
               <tr>
                 <td class="tb-nowrap"><?=$num ?></td>
                 <td class="tb-nowrap"><?=strtoupper($row->testname) ?></td>
-                <td class="tb-nowrap"><?=esc($row->labSectionRow->labname ?? "N/A" )?> </td>
-                <td class="tb-nowrap"><?=esc($row->sampleRow->samplename ?? "N/A" )?></td>
-                <td class="tb-nowrap"><?=esc($row->refRanges ?? "N/A" )?></td>
-                <td class="tb-nowrap"><?=esc($row->unitRow->unitname ?? "N/A" )?></td>
+                <td class="tb-nowrap"><?=esc($row->labSectionInfo->labname )?> </td>
+                <td class="tb-nowrap"><?=esc($row->sampleInfo->samplename )?></td>
                 <td class="tb-nowrap">
                   <span class="<?php if ($row->testStatus === 'disabled') { echo "badge bg-danger";}else {echo "badge bg-success";} ?>">
                     <?=ucfirst($row->testStatus) ?>
                   </span>
                 </td>
-                <td class="tb-nowrap text-end text-center"><?=esc($row->userRow->name ?? "Deleted" )?></td>
+                <td class="tb-nowrap text-end text-center"><?=esc($row->userInfo->fullname ?? " " )?></td>
                 <td class="tb-nowrap text-center" ><?=get_date($row->testDate ) ?></td>
                 <td class="tb-nowrap text-end">
                   <a href="<?=ROOT?>/Tests/edit/<?=$row->id?>" class=" text-primary"><i class="fa fa-edit"></i></a>|

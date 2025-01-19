@@ -14,11 +14,10 @@ class Roles extends Controller
       $this->redirect('login');
     }
 
-    $role = New Role();
+    $role = new Role();
     $errors = [];
     // view all saved Roles in the database
     $data = $role->findAll();
-
     require $this->viewsPath("admin/settings/role");
   }
 
@@ -31,13 +30,13 @@ class Roles extends Controller
       $this->redirect('login');
     }
 
-    $role = New Role();
+    $role = new Role();
     $errors = [];
     if($_SERVER['REQUEST_METHOD'] == "POST")
     {
       if ($role->validate($_POST))
       {
-        $_POST['userId'] = Auth::getId();
+        $_POST['roleUserId'] = Auth::getUserId();
         $_POST['date'] = date('Y-m-d H:i:s');
         $role->insert($_POST);
         message('Role Successfully Saved!');
@@ -61,7 +60,7 @@ class Roles extends Controller
       $this->redirect('login');
     }
     $errors = [];
-    $role = New Role();
+    $role = new Role();
     $row = $role->first('id',$id);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")
@@ -89,7 +88,7 @@ class Roles extends Controller
       $this->redirect('login');
     }
     $errors = [];
-    $role = New Role();
+    $role = new Role();
     $row = $role->first('id',$id);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")

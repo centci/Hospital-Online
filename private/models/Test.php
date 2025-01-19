@@ -4,17 +4,18 @@
  */
 class Test extends Model
 {
+  protected $table = "tests";
   protected $allowedColumns = [
     'toggleswitch',
     'testname',
     'cost',
     'insurance_cost',
-    'labSecId',
-    'sampleid',
-    'containerid',
+    'testsLabSectionId',
+    'testsSampleId',
+    'testsContainerId',
     'refRanges',
-    'unitid',
-    'userId',
+    'testsUnitId',
+    'testsUserId',
     'testCode',
     'testStatus',
     'testDate',
@@ -66,9 +67,9 @@ class Test extends Model
       }
 
       //Validate lab department
-      if (empty($DATA['labSecId']))
+      if (empty($DATA['testsLabSectionId']))
       {
-        $this->errors['labSecId'] = "Lab Section Required!";
+        $this->errors['testsLabSectionId'] = "Lab Section Required!";
       }
       //Validate Test Status
       if (empty($DATA['testStatus']))
@@ -77,15 +78,15 @@ class Test extends Model
       }
 
       //Validate Sample Type
-      if (empty($DATA['sampleid']))
+      if (empty($DATA['testsSampleId']))
       {
-        $this->errors['sampleid'] = "Sample Type Required!";
+        $this->errors['testsSampleId'] = "Sample Type Required!";
       }
 
       //Validate Sample Container
-      if (empty($DATA['containerid']))
+      if (empty($DATA['testsContainerId']))
       {
-        $this->errors['containerid'] = "Sample Container Required!";
+        $this->errors['testsContainerId'] = "Sample Container Required!";
       }
 
       //Validate Test Refrance Ranges
@@ -100,9 +101,9 @@ class Test extends Model
       //Validate Test Units
       if (empty($DATA['toggleswitch']))
          {
-        if (empty($DATA['unitid']))
+        if (empty($DATA['testsUnitId']))
         {
-          $this->errors['unitid'] = "Unit Required!";
+          $this->errors['testsUnitId'] = "Unit Required!";
         }
       }
     }
@@ -157,7 +158,7 @@ class Test extends Model
   //the run function to make testCode id
   public function make_testCode($testCode)
   {
-    $db = New Database();
+    $db = new Database();
     $query = "SELECT testCode FROM tests ORDER BY id DESC LIMIT 1";
     $Tcode = $db->query($query);
 
@@ -177,99 +178,91 @@ class Test extends Model
     }
     return $testCode;
   }
+// =======================================================================================================
+// Function to get labsections information from $rows by labSectionId, enriched with relational data
+  public function getLabById($rows) {
+    // Input: $rows is the dataset containing records from another source (e.g., test results)
 
-  // get user by id
-  public function getUserById($rows)
-  {
-    $db = New Database();
-    if (!empty($rows[0]->userId))
-    {
-      foreach ($rows as $key => $row)
-      {
-        $query = "SELECT id, firstname,lastname,role,username FROM users WHERE id = :id LIMIT 1";
-        $user = $db->query($query,['id'=>$row->userId]);
-        if (!empty($user))
-        {
-          $user[0]->name = esc($user[0]->firstname ." ". $user[0]->lastname);
-          $rows[$key]->userRow = $user[0];
-        }
-      }
-    }
-    return $rows;
+    // Call attachRelatedData to enrich the $rows data with related data information
+    $result = $this->getRelatedData(
+      $rows,                  // The existing dataset
+      'labsections',          // Related table name where we are looking for labsections information
+      'labSectionId',         // Column in `labsections` table
+      'testsLabSectionId',             // Column in $rows for matching one in labsections table
+      ['labSectionId', 'labname'], // Fields to retrieve from the related/users table
+      ['labSectionId', 'labname'], // Allowed fields to validate requested fields
+      'labSectionInfo',              // Key where related info will be attached
+      'LSC-'                   /* prefix for userId here if needed, just incase database userId = 12 instead
+                                  of USR-002   */
+    );
+    return $result;
   }
-  // get lab Section by id
-  public function getLabById($rows)
-  {
-    $db = New Database();
-    if (!empty($rows[0]->labSecId))
-    {
-      foreach ($rows as $key => $row)
-      {
-        $query = "SELECT * FROM labsections WHERE id = :id LIMIT 1";
-        $labSec = $db->query($query,['id'=>$row->labSecId]);
-        if (!empty($labSec))
-        {
-          $rows[$key]->labSectionRow = $labSec[0];
-        }
-      }
-    }
-    return $rows;
+// =======================================================================================================
+// get user information from $rows by testsUserId, enriched with relational data
+  public function getUserById($rows) {
+    $result = $this->getRelatedData(
+      $rows,                  // The existing dataset
+      'users',                // Related table name where we are looking for user information
+      'userId',               // Column in `users` table
+      'testsUserId',          // Column in $rows for matching one in users table
+      ['userId', 'firstname', 'lastname'], // Fields to retrieve from the related/users table
+      ['userId', 'firstname', 'lastname'], // Allowed fields to validate requested fields
+      'userInfo',              // Key where related info will be attached
+      'USR-'                   /* prefix for userId here if needed, just incase database userId = 12 instead
+                                  of USR-002   */
+    );
+    return $result;
   }
-  // get sample type by id
-  public function getSampleById($rows)
-  {
-    $db = New Database();
-    if (!empty($rows[0]->sampleid))
-    {
-      foreach ($rows as $key => $row)
-      {
-        $query = "SELECT * FROM samples WHERE id = :id LIMIT 1";
-        $sample = $db->query($query,['id'=>$row->sampleid]);
-        if (!empty($sample))
-        {
-          $rows[$key]->sampleRow = $sample[0];
-        }
-      }
-    }
-    return $rows;
+
+// =======================================================================================================
+// Function to get samples information from $rows by testsSampleId, enriched with relational data
+  public function getSampleById($rows) {
+    $result = $this->getRelatedData(
+      $rows,                  // The existing dataset
+      'samples',                // Related table name where we are looking for samples information
+      'sampleId',               // Column in `samples` table
+      'testsSampleId',         // Column in $rows for matching one in samples table
+      ['sampleId', 'samplename'], // Fields to retrieve from the related/samples table
+      ['sampleId', 'samplename'], // Allowed fields to validate requested fields
+      'sampleInfo',              // Key where related info will be attached
+      'SAM-'                   /* prefix for sampleId here if needed, just incase database sampleId = 12 instead
+                                  of SAM-002   */
+    );
+    return $result;
   }
-  // get Tests Unit by id
-  public function getUnitById($rows)
-  {
-    // show($rows);die;
-    $db = New Database();
-    if (!empty($rows[0]->unitid))
-    {
-      foreach ($rows as $key => $row)
-      {
-        $query = "SELECT * FROM units WHERE unit_id = :unit_id LIMIT 1";
-        $unit = $db->query($query,['unit_id'=>$row->unitid]);
-        if (!empty($unit))
-        {
-          $rows[$key]->unitRow = $unit[0];
-        }
-        // show($rows);die;
-      }
-    }
-    return $rows;
+// =====================================================================================================
+// Function to get units information from $rows by testsUnitId, enriched with relational data
+  public function getUnitById($rows) {
+    $result = $this->getRelatedData(
+      $rows,                  // The existing dataset
+      'units',                // Related table name where we are looking for samples information
+      'unitId',               // Column in `units` table
+      'testsUnitId',           // Column in $rows for matching one in Units table
+      ['unitId', 'unitname'], // Fields to retrieve from the related/units table
+      ['unitId', 'unitname'], // Allowed fields to validate requested fields
+      'unitInfo',              // Key where related info will be attached
+      'UNI-'                   /* prefix for unitId here if needed, just incase database unitId = 12 instead
+                                  of UNI-002   */
+    );
+    return $result;
   }
-  // get Tests container by id
-  public function getSampleContainerById($rows)
-  {
-    $db = New Database();
-    if (!empty($rows[0]->containerid))
-    {
-      foreach ($rows as $key => $row)
-      {
-        $query = "SELECT * FROM containers WHERE id = :id LIMIT 1";
-        $container = $db->query($query,['id'=>$row->containerid]);
-        if (!empty($container))
-        {
-          $rows[$key]->containerRow = $container[0];
-        }
-      }
-    }
-    return $rows;
+// =====================================================================================================
+
+// Function to get containers information from $rows by testsContainerId, enriched with relational data
+  public function getSampleContainerById($rows) {
+    $result = $this->getRelatedData(
+      $rows,                  // The existing dataset
+      'containers',                // Related table name where we are looking for samples information
+      'containerId',               // Column in `containers` table
+      'testsContainerId',           // Column in $rows for matching one in samples table
+      ['containerId', 'containername'], // Fields to retrieve from the related/containers table
+      ['containerId', 'containername'], // Allowed fields to validate requested fields
+      'containerInfo',              // Key where related info will be attached
+      'CON-'                   /* prefix for containerId here if needed, just incase database containerId
+                                  = 12 instead of CON-002   */
+    );
+    return $result;
   }
+// =====================================================================================================
 
 }

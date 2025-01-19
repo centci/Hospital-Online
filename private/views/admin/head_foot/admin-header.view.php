@@ -213,7 +213,7 @@
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
               <h6><?= esc(Auth::getFirstname()." ".Auth::getLastname()) ?></h6>
-              <span><?=Auth::getRole() ?></span>
+              <span><?=Auth::getRoleRow()->role; ?></span>
             </li>
             <li>
               <hr class="dropdown-divider">

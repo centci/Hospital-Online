@@ -13,7 +13,7 @@ class Admin extends Controller
       $this->redirect('login');
       message('Please Login To View The Admin Section');
     }
-    $user = New User();
+    $user = new User();
     $data = $user->findAll();
 
     require $this->viewsPath("admin/dashboard/admin-home");

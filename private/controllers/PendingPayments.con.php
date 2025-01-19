@@ -14,7 +14,7 @@ class PendingPayments extends Controller
       message('Please Login To View The Admin Section');
     }
     // here we are to use SELECT DISTINCT to get record with no duplicate
-    $notpaid = New PendingPayment();
+    $notpaid = new PendingPayment();
 
     $pendingpayment = $notpaid->query("SELECT DISTINCT pendingPayId, firstname, patientNo, patientId, sentBy, department, pymt_status, pendingPayDate FROM `pendingPayments`
     JOIN patients ON pendingPayments.patientNo = patients.patientId
@@ -33,8 +33,8 @@ class PendingPayments extends Controller
       $this->redirect('login');
       message('Please Login To View The Admin Section');
     }
-    $testdetails = New PendingPayment();
-    $patientDetail = New Patient();
+    $testdetails = new PendingPayment();
+    $patientDetail = new Patient();
 
     $patientInfo = $patientDetail->first('patientId',$id);
 
@@ -70,13 +70,13 @@ class PendingPayments extends Controller
         {
           // show($row_data);die;
 
-          $savingpayment = New cashierSaved();
-          $pendingpayment = New PendingPayment();
-          $db = New Database();
+          $savingpayment = new cashierSaved();
+          $pendingpayment = new PendingPayment();
+          $db = new Database();
 
           $itemsData = $OBJ['text'];
           $receipt_no = random_string(10);
-          $loggedinUser = $_POST['userId'] = Auth::getId();
+          $loggedinUser = $_POST['userId'] = Auth::getUserId();
           $dateRecorded = $_POST['cashierSavedDate'] = date('Y-m-d H:i:s');
 
           if (is_array($itemsData))
@@ -119,12 +119,12 @@ class PendingPayments extends Controller
     $month = date("m");
     $day = date("d");
 
-    $db = New Database();
+    $db = new Database();
     $query = "SELECT testname,testCode, cost, firstname, lastname, department, cashierSavedReceiptNo, cashierSavedBy, cashierSavedDate FROM `cashierSaveds`
       JOIN tests ON cashierSaveds.cashierSavedTestCode = tests.testCode
       JOIN pendingPayments ON cashierSaveds.cashierSavedPendingPayId = pendingPayments.pendingPayId
       JOIN patients ON pendingPayments.patientNo = patients.patientId
-      JOIN departments ON pendingPayments.departmentId = departments.dept_id
+      JOIN departments ON pendingPayments.departmentId = departments.deptId
       WHERE cashierSaveds.cashierSavedPendingPayId = pendingPayments.pendingPayId AND cashierSaveds.cashierSavedTestCode = pendingPayments.itemCode";
 
 
@@ -135,7 +135,7 @@ class PendingPayments extends Controller
         JOIN tests ON cashierSaveds.cashierSavedTestCode = tests.testCode
         JOIN pendingPayments ON cashierSaveds.cashierSavedPendingPayId = pendingPayments.pendingPayId
         JOIN patients ON pendingPayments.patientNo = patients.patientId
-        JOIN departments ON pendingPayments.departmentId = departments.dept_id
+        JOIN departments ON pendingPayments.departmentId = departments.deptId
         WHERE cashierSaveds.cashierSavedPendingPayId = pendingPayments.pendingPayId AND cashierSaveds.cashierSavedTestCode = pendingPayments.itemCode AND
         cashierSavedDate BETWEEN '$startdate' AND '$enddate'";
     }

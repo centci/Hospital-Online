@@ -14,7 +14,7 @@ class Departments extends Controller
       $this->redirect('login');
     }
 
-    $departments = New Department();
+    $departments = new Department();
     $errors = [];
     // view all saved Department in the database
     $data = $departments->findAll();
@@ -31,13 +31,13 @@ class Departments extends Controller
       $this->redirect('login');
     }
 
-    $departments = New Department();
+    $departments = new Department();
     $errors = [];
     if($_SERVER['REQUEST_METHOD'] == "POST")
     {
-      if ($departments->validate($_POST)) 
+      if ($departments->validate($_POST))
       {
-        $_POST['userId'] = Auth::getId();
+        $_POST['deptUserId'] = Auth::getUserId();
         $_POST['date'] = date('Y-m-d H:i:s');
         $departments->insert($_POST);
         message('Department Successfully Saved!');
@@ -61,7 +61,7 @@ class Departments extends Controller
       $this->redirect('login');
     }
     $errors = [];
-    $departments = New Department();
+    $departments = new Department();
     $row = $departments->first('id',$id);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")
@@ -89,7 +89,7 @@ class Departments extends Controller
       $this->redirect('login');
     }
     $errors = [];
-    $departments = New Department();
+    $departments = new Department();
     $row = $departments->first('id',$id);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")

@@ -68,7 +68,7 @@ public function displayItemDetails($cashierSavedReceiptNo=null)
       {
         if ($OBJ['data_type'] == "requestDetails")
         {
-          $LabItemsToSave = $itemDetail->query("SELECT testname, testCode, cost, pymt_status, firstname, lastname, patientId, cashierSavedReceiptNo, pendingPayVisitId, cashierSavedBy, cashierSavedDate FROM `cashierSaveds`
+          $LabItemsToSave = $itemDetail->query("SELECT testname, testCode, cost, pymt_status, firstname, lastname, patientId, cashierSavedReceiptNo, cashierSavedBy, cashierSavedDate FROM `cashierSaveds`
             JOIN tests ON cashierSaveds.cashierSavedTestCode = tests.testCode
             JOIN pendingPayments ON cashierSaveds.cashierSavedPendingPayId = pendingPayments.pendingPayId
             JOIN patients ON pendingPayments.patientNo = patients.patientId
@@ -104,7 +104,6 @@ public function displayItemDetails($cashierSavedReceiptNo=null)
             $itemArr['labReqSampleId'] = $labReqSampleId;
             $itemArr['labReqPatientId'] = $row['patientId'];
             $itemArr['labReqTestCode'] = $row['testCode'];
-            $itemArr['labReqVisitId'] = $row['pendingPayVisitId'];
             $itemArr['LabReqCashierSavedReceiptNo'] = $row['cashierSavedReceiptNo'];
             $itemArr['labReqSavedByUserId'] = $loggedinUser;
             $itemArr['DrawnDate'] = $dateRecorded;
@@ -201,9 +200,20 @@ public function LaboratorysavedrequestDetails_submitReport($patientId=null,$labR
       }
     }
     else
-    //INSERT TEST RESULTS TO REPORT TABLE AND LABEXTRATESTREPORTS TABLE
+    //INSERT TEST RESULTS TO REPORT TABLE
     if (!empty($_POST) && $_POST['data_type'] == "save")
     {
+      // if (isset($_POST['extratestResults_0']))
+      // {
+      //   unset($_POST['testResult']);
+      //   unset($_POST['unitname']);
+      //   unset($_POST['reportLabReqSampleId']);
+      //   unset($_POST['reportTestCode']);
+      //   unset($_POST['labReportId']);
+      //   unset($_POST['reportUserId']);
+      //   unset($_POST['reportDate']);
+      // }
+
       if (isset($_POST['extratestResults_0']))
       {
         // Unset all variables starting with "testResult", "unitname", etc.
@@ -289,7 +299,7 @@ public function LaboratorysavedrequestDetails_submitReport($patientId=null,$labR
             $extraTestReportBy            =   $xtraTest['extraTestReportBy'][$i];
             $extraTestReportDate          =   $xtraTest['extraTestReportDate'][$i];
 
-            //INSERT TEST RESULTS TO  LABEXTRATESTREPORTS TABLE
+            // insert statements for extar tests
             $sql =  ("INSERT INTO `labextratestreports`(`extraTestReportId`, `extraTestReportSampId`, `extratestResults`, `extraTestReportTestCode`, `extraTestReportSubTestCode`, `extraTestReportBy`, `extraTestReportDate`) VALUES ('$extraTestReportId', '$extraTestReportSampId', '$extratestResults', '$extraTestReportTestCode', '$extraTestReportSubTestCode', '$extraTestReportBy', '$extraTestReportDate')");
             $results = $db->query($sql);
 
@@ -332,7 +342,156 @@ public function laboratoryreports($id='')
 
   require $this->viewsPath("laboratory/laboratory-reports");
 }
-// displaying individual laboratory test results for printing
+// public function laboratoryreportsdetails($patientId='',$labReqSampleId='')
+// {
+//   if (!Auth::logged_in())
+//   {
+//     warrningMessage('Please Login To Access This Page!');
+//
+//     $this->redirect('login');
+//   }
+//
+//   $labReport      = new Test();
+//   $patientInfo    = new Patient();
+//
+// // getting patients information to print patients results or reports
+//   $patientInfoRow = $patientInfo->query("SELECT DISTINCT
+//   CONCAT(patients.firstname,' ',patients.middlename,' ',patients.lastname) AS PatientsFullName, patients.gender, patients.dob, patients.patientId, visits.visitCat, visits.VisitDate, visits.billMode, labRequests.labReqSampleId AS SpecimenNo, labRequests.DrawnDate, CONCAT(users.firstname, ' ', users.lastname) AS DrawnBy, visits.drUserId
+//
+//   FROM labRequests
+//   JOIN patients ON labRequests.labReqPatientId = patients.patientId
+//   JOIN cashierSaveds ON labRequests.LabReqCashierSavedReceiptNo = cashierSaveds.cashierSavedReceiptNo
+//   JOIN visits ON labRequests.labReqVisitId = visits.visit_Id
+//   JOIN users ON labRequests.labReqSavedByUserId = users.userId
+//   WHERE labRequests.labReqSampleId = :labReqSampleId",
+//   [':labReqSampleId' => $labReqSampleId]);
+//
+//   $patientInfo = $patientInfoRow[0];
+//   // show($patientInfo);die;
+//
+// // getting results for single test from labReports table
+// $labReportRows = $labReport->query("SELECT labReports.reportLabReqSampleId, tests.testname, labReports.testResult, tests.refRanges, tests.unitid
+//    FROM `labReports`
+//    JOIN tests ON tests.testCode = labReports.reportTestCode
+//    WHERE labReports.reportLabReqSampleId = :labReqSampleId",
+//   [':labReqSampleId' => $labReqSampleId]);
+//
+// // getting primary name of Extra Test From Tests Table
+//   foreach ($labReportRows as $key => $primaryRow)
+//   {
+//     if ($primaryRow->reportLabReqSampleId)
+//     {
+//       $primaryTestName = $labReport->query("SELECT DISTINCT tests.testname  FROM `labextratestreports`
+//       JOIN tests ON labextratestreports.extraTestReportTestCode = tests.testCode
+//       WHERE labextratestreports.extraTestReportTestCode = tests.testCode AND labextratestreports.extraTestReportSampId  = '$labReqSampleId'");
+//
+//     }
+//   }
+// // getting result for extra tests from labextratestreports table
+//   foreach ($labReportRows as $key => $labReportRow)
+//   {
+//     if ($labReportRow->reportLabReqSampleId)
+//     {
+//       $ExtralabReportRow = $labReport->query("
+//         SELECT extratests.xtraTestName AS testname,
+//                labextratestreports.extratestResults AS testResult,
+//                extratests.xtraRefRanges AS refRanges,
+//                extratests.xtraUnitid AS unitid
+//         FROM labextratestreports
+//         JOIN extratests
+//               ON labextratestreports.extraTestReportSubTestCode = extratests.subTestCode
+//         WHERE labextratestreports.extraTestReportSampId = :labReqSampleId", [':labReqSampleId' => $labReqSampleId]);
+//     }
+//   }
+//
+// $ReportRow = array_merge($labReportRows, $primaryTestName, $ExtralabReportRow);
+//
+// // show($ReportRow);die;
+//   require $this->viewsPath("laboratory/laboratory-reports-details");
+// }
+
+// public function laboratoryreportsdetails($patientId = '', $labReqSampleId = '')
+// {
+//     // Ensure the user is logged in
+//     if (!Auth::logged_in()) {
+//         warrningMessage('Please Login To Access This Page!');
+//         $this->redirect('login');
+//     }
+//
+//     $labReport = new Test();
+//     $patientInfo = new Patient();
+//
+//     // 1. Fetch patient information
+//     $patientInfoRow = $patientInfo->query("
+//         SELECT DISTINCT
+//             CONCAT(patients.firstname, ' ', patients.middlename, ' ', patients.lastname) AS PatientsFullName,
+//             patients.gender, patients.dob, patients.patientId,
+//             visits.visitCat, visits.VisitDate, visits.billMode,
+//             labRequests.labReqSampleId AS SpecimenNo, labRequests.DrawnDate,
+//             CONCAT(users.firstname, ' ', users.lastname) AS DrawnBy, visits.drUserId
+//         FROM labRequests
+//         JOIN patients ON labRequests.labReqPatientId = patients.patientId
+//         JOIN cashierSaveds ON labRequests.LabReqCashierSavedReceiptNo = cashierSaveds.cashierSavedReceiptNo
+//         JOIN visits ON labRequests.labReqVisitId = visits.visit_Id
+//         JOIN users ON labRequests.labReqSavedByUserId = users.userId
+//         WHERE labRequests.labReqSampleId = :labReqSampleId",
+//         [':labReqSampleId' => $labReqSampleId]
+//     );
+//
+//     $patientInfo = $patientInfoRow[0];
+//
+//     // 2. Fetch primary and extra test results in a structured way
+//     $combinedReportData = $labReport->query("
+//         SELECT
+//             tests.testname AS primaryTestName,                          -- Primary test (e.g., RFT)
+//             extratests.xtraTestName AS subTestName,                     -- Subtest (e.g., Urea, Creatinine, etc.)
+//             labReports.testResult AS primaryTestResult,                -- Result for the primary test
+//             extratests.xtraRefRanges AS subTestRefRange,                -- Reference Range for the subtest
+//             extratests.xtraUnitid AS subTestUnit,                       -- Units for the subtest
+//             labextratestreports.extratestResults AS subTestResult       -- Result for the subtest
+//         FROM labReports
+//         JOIN tests ON labReports.reportTestCode = tests.testCode
+//         LEFT JOIN labextratestreports
+//             ON labReports.reportLabReqSampleId = labextratestreports.extraTestReportSampId
+//         LEFT JOIN extratests
+//             ON labextratestreports.extraTestReportSubTestCode = extratests.subTestCode
+//         WHERE labReports.reportLabReqSampleId = :labReqSampleId",
+//         [':labReqSampleId' => $labReqSampleId]
+//     );
+//
+//     // 3. Group data by primary test name
+//     $structuredReports = [];
+//     foreach ($combinedReportData as $row) {
+//         $primaryTestName = $row->primaryTestName;
+//
+//         // If primary test doesn't exist, initialize its structure
+//         if (!isset($structuredReports[$primaryTestName])) {
+//             $structuredReports[$primaryTestName] = [
+//                 'primaryTestResult' => $row->primaryTestResult,
+//                 'subtests' => [] // Initialize subtests array
+//             ];
+//         }
+//
+//         // Add subtest information if it exists
+//         if ($row->subTestName) {
+//             $structuredReports[$primaryTestName]['subtests'][] = [
+//                 'name' => $row->subTestName,
+//                 'result' => $row->subTestResult,
+//                 'range' => $row->subTestRefRange,
+//                 'unit' => $row->subTestUnit
+//             ];
+//         }
+//     }
+//
+//     // 4. Prepare data to send to the view
+//     $data = [
+//         'patientInfo' => $patientInfo,
+//         'structuredReports' => $structuredReports
+//     ];
+// show($data);die;
+//     // 5. Load the view with structured data
+//     require $this->viewsPath("laboratory/laboratory-reports-details", $data);
+// }
 public function laboratoryreportsdetails($patientId = '', $labReqSampleId = '')
 {
     // Ensure the user is logged in
@@ -384,7 +543,7 @@ public function laboratoryreportsdetails($patientId = '', $labReqSampleId = '')
             extratests.xtraTestName AS subTestName,            -- UREA, CREATININE etc.
             labextratestreports.extratestResults AS subTestResult,
             extratests.xtraRefRanges AS subTestRefRange,
-            extratests.xtraUnitid AS unitid
+            extratests.xtraUnitid AS subTestUnit
         FROM labextratestreports
         JOIN extratests ON labextratestreports.extraTestReportSubTestCode = extratests.subTestCode
         JOIN tests ON labextratestreports.extraTestReportTestCode = tests.testCode
@@ -399,8 +558,6 @@ public function laboratoryreportsdetails($patientId = '', $labReqSampleId = '')
     foreach ($primaryTests as $primaryTest) {
         $structuredReports[$primaryTest->primaryTestName] = [
             'primaryTestResult' => $primaryTest->testResult,
-            'primaryTestRefRanges' => $primaryTest->refRanges,
-            'primaryTestUnit' => $primaryTest->unitRow->unitname,
             'subtests' => [] // Initialize empty subtests array
         ];
     }
@@ -423,12 +580,18 @@ public function laboratoryreportsdetails($patientId = '', $labReqSampleId = '')
               'name' => $subtest->subTestName,
               'result' => $subtest->subTestResult,
               'range' => $subtest->subTestRefRange,
-              'unit' => $subtest->unitRow->unitname
+              'unit' => $subtest->subTestUnit
           ];
       }
     }
 
-    // 5. Load the view with structured data
+    // 5. Prepare data to send to the view
+    $data = [
+        'patientInfo' => $patientInfo,
+        'structuredReports' => $structuredReports
+    ];
+// show($data);die;
+    // 6. Load the view with structured data
     require $this->viewsPath("laboratory/laboratory-reports-details");
 }
 

@@ -4,13 +4,17 @@
  */
 class User extends Model
 {
+  protected $table = 'users'; // Explicitly set the table name
+
   protected $allowedColumns = [
+    'userId',
     'firstname',
     'lastname',
     'username',
     'gender',
     'email',
     'role',
+    'specialize',
     'image',
     'about',
     'company',
@@ -25,8 +29,12 @@ class User extends Model
     'password'
   ];
 
-  // password hash
-  protected $beforInsert = ['password_hash'];
+  //protected function to hash password, make User Id
+  protected $beforeInsert = ['password_hash', 'makeUserId'];
+
+  protected $afterSelect = [
+    'getRoleById',
+  ];
 
   // form validation before inserting data
   public function validate($DATA,$id = null)
@@ -50,9 +58,11 @@ class User extends Model
     // Validate User Name
     if (empty($DATA['username'])) {
       $this->errors['username'] = "Username Is Required!";
-    }elseif (!preg_match('/^[a-zA-Z]+$/', $DATA['username'])) {
-
-      $this->errors['username'] = "Only Letters Allowed, No Space!";
+    }elseif (!preg_match('/^[a-zA-Z0-9_]{3,20}$/', $DATA['username'])) {
+      $this->errors['username'] = "Username must be 3-20 characters, containing only letters, numbers, and underscores.";
+    }elseif ($this->where('username',$DATA['username']))
+    {
+      $this->errors['username'] = "User Name Already Taken!";
     }
     // validate gender
     if (empty($DATA['gender'])) {
@@ -250,6 +260,62 @@ class User extends Model
   {
     $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
     return $data;
+  }
+
+  // Function to generate User Id
+  public function makeUserId($userData)
+  {
+    // Instantiate the database connection
+    $db = new Database();
+
+    // Query to fetch the last user ID
+    $query = "SELECT userId FROM users ORDER BY id DESC LIMIT 1";
+    $result = $db->query($query);
+
+    $lastId = is_array($result) ? $result[0]->userId : null; // Fetch the last userId if available
+
+    // Check if a previous userId exists
+    if (!empty($lastId)) {
+        // Extract the number from the userId
+        $lastNumericCode = substr($lastId, 4); // Get the number after 'USR-'
+
+        // Increment the number and pad with zeros to 4 digits
+        $nextUserCode = str_pad(($lastNumericCode + 1), 4, "0", STR_PAD_LEFT);
+
+        // Create the new user ID
+        $userId = 'USR-' . $nextUserCode;
+    } else {
+        // Initialize with the default value for the first user
+        $userId = 'USR-0001';
+    }
+
+    // Prepare the user ID array
+    $userData['userId'] = $userId;
+    // show($userData);die;
+    // Return the updated array
+    return $userData;
+  }
+
+  // get user by id
+  public function getRoleById($rows)
+  {
+
+    $db = new Database();
+    if (!empty($rows[0]->usersRoleId))
+    {
+      foreach ($rows as $key => $row)
+      {
+        $query = "SELECT role FROM roles WHERE roleId = :roleId LIMIT 1";
+        $role = $db->query($query,['roleId'=>$row->usersRoleId]);
+
+        if (!empty($role))
+        {
+          $rows[$key]->roleRow = $role[0];
+        }
+      }
+    }
+
+    return $rows;
   }
 
 }

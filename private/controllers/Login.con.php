@@ -13,7 +13,7 @@ class Login extends Controller
 
     if(count($_POST) > 0)
     {
-      $user = New User();
+      $user = new User();
       $row = $user->where('email',$_POST['email']);
       if($row)
       {

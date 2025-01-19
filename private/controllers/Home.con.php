@@ -12,7 +12,7 @@ class Home extends Controller
     {
       $this->redirect('login');
     }
-    $user = New User();
+    $user = new User();
 
     $data = $user->findAll();
 

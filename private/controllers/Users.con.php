@@ -13,7 +13,7 @@ class Users extends Controller
     {
       $this->redirect('login');
     }
-    $user = New User();
+    $user = new User();
     $rows = $user->findAll();
     // show($rows);die;
     require $this->viewsPath("admin/users/users");
@@ -29,9 +29,16 @@ class Users extends Controller
 
   	$errors = [];
 
+    $user = new User();
+    $role = new Role();
+    $specialize = new Specialization();
+
+    $roleRow = $role->findAll();
+    $specializeRow = $specialize->findAll();
     if(count($_POST) > 0)
     {
-      $user = New User();
+      // show($_POST);die;
+
       if ($user->validate($_POST))
       {
         $_POST['date'] = date('Y-m-d H:i:s');
@@ -50,87 +57,79 @@ class Users extends Controller
 
   public function profile($id = null)
   {
-    if (!Auth::logged_in())
-    {
-      $this->redirect('login');
+    if (!Auth::logged_in()) {
+        $this->redirect('login');
     }
-    $user = New User();
 
-    // reading user profile
+    $user = new User();
     $title = "Profile";
-    $id = $id ?? Auth::getId();
-    $row = $user->first('id',$id);
+    $id = $id ?? Auth::getUserId();
+    $row = $user->first('id', $id);
 
-    // Updating user profile
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && $row)
-    {
+    // Handle form submission
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && $row) {
+        $folder = 'uploads/images/';
 
-      $folder = 'uploads/images/';
-      if (!file_exists($folder))
-      {
-        mkdir($folder,0777,true);
-        file_put_contents($folder."index.php", "<?php //silence");
-        file_put_contents("uploads/index.php", "<?php //silence");
-      }
-      if ($user->edit_validate($_POST,$id))
-      {
-        $allowedfiles = ['image/jpeg','image/png'];
-
-        if(!empty($_FILES['image']['name']))
-        {
-          if($_FILES['image']['error'] == 0)
-          {
-            if (in_array($_FILES['image']['type'], $allowedfiles))
-            {
-              $destination = $folder.time().$_FILES['image']['name'];
-              move_uploaded_file($_FILES['image']['tmp_name'], $destination);
-
-              // crop the image here now
-              resize_image($destination);
-
-              $_POST['image'] = $destination;
-              if (file_exists($row->image))
-              {
-                unlink($row->image);
-              }
-            }
-            else
-            {
-              $this->errors['image'] = "This File Type Is Not Allowed";
-            }
-          }
-          else
-          {
-            $this->errors['image'] = "Error, Couldnt Upload Image";
-          }
+        // Create directory if it doesn't exist
+        if (!file_exists($folder)) {
+            mkdir($folder, 0777, true);
+            file_put_contents($folder . "index.php", "<?php //silence");
+            file_put_contents("uploads/index.php", "<?php //silence");
         }
 
-        $user->update($id,$_POST);
-        // message("Profile Updated Successfully");
-        // $this->redirect('Users/profile/'.$id);
+        // Validate user input
+        if ($user->edit_validate($_POST, $id)) {
+            $allowedFiles = ['image/jpeg', 'image/png'];
 
-      }
-      //handle results for json
-      if (empty($user->errors))
-      {
-        $arr['message'] = "Profile Updated Successfully";
-      }
-      else
-      {
-        $arr['message'] = "Please correct these errors";
-        $arr['errors'] = $user->errors;
-      }
-      echo json_encode($arr);
-      //handle results for json end here
+            // Check if an image file was uploaded
+            if (!empty($_FILES['image']['name'])) {
+                if ($_FILES['image']['error'] == 0) {
+                    // Validate file type
+                    if (in_array($_FILES['image']['type'], $allowedFiles)) {
+                        $destination = $folder . time() . "_" . basename($_FILES['image']['name']);
+                        // Move the uploaded file
+                        if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
+                            // Resize the image now
+                            if (resize_image($destination) === false) {
+                                // Handle error in resizing
+                                $this->errors['image'] = "Error resizing the image.";
+                            } else {
+                                $_POST['image'] = $destination;
 
-      // else
-      // {
-      // 	// errors
-      // 	$errors = $user->errors;
-      // }
-      die();
+                                // Remove old image if it exists
+                                if (file_exists($row->image)) {
+                                    unlink($row->image);
+                                }
+                            }
+                        } else {
+                            $this->errors['image'] = "Failed to move the uploaded file.";
+                        }
+                    } else {
+                        $this->errors['image'] = "This File Type Is Not Allowed";
+                    }
+                } else {
+                    $this->errors['image'] = "Error, Couldn't Upload Image";
+                }
+            }
+
+            // Update the user profile
+            $user->update($id, $_POST);
+
+            // Prepare JSON response
+            $arr = [];
+            if (empty($user->errors)) {
+                $arr['message'] = "Profile Updated Successfully";
+            } else {
+                $arr['message'] = "Please correct these errors";
+                $arr['errors'] = $user->errors;
+            }
+
+            echo json_encode($arr);
+            die();
+        }
     }
 
+    // Load the profile view
     require $this->viewsPath("admin/users/profile");
   }
 

@@ -21,7 +21,7 @@
 
             <img src="<?=$image?>"  alt="Profile" class="rounded-circle progile-image">
             <h2><?=esc(ucfirst($row->firstname)." ".ucfirst($row->lastname))?></h2>
-            <h3><?=esc(ucfirst($row->role))?></h3>
+            <h3><?=esc(ucfirst($row->roleRow->role))?></h3>
             <div class="social-links mt-2">
               <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
               <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
@@ -93,7 +93,7 @@
 
                 <div class="row">
                   <div class="col-lg-3 col-md-4 label">Job</div>
-                  <div class="col-lg-9 col-md-8"><?=esc(ucfirst($row->role))?></div>
+                  <div class="col-lg-9 col-md-8"><?=esc(ucfirst($row->roleRow->role))?></div>
                 </div>
 
                 <div class="row">
@@ -507,6 +507,7 @@
 
   function handle_result(result)
   {
+    // console.log(result);
     var obj = JSON.parse(result);
     if (typeof obj == 'object')
     {

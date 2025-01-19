@@ -14,11 +14,11 @@ class Containers extends Controller
       $this->redirect('login');
     }
 
-    $containers = New Container();
+    $containers = new Container();
     $errors = [];
     // view all saved Containers in the database
     $data = $containers->findAll();
-
+// show($data);die;
     require $this->viewsPath("admin/Containers/containers");
   }
 
@@ -31,13 +31,13 @@ class Containers extends Controller
       $this->redirect('login');
     }
 
-    $containers = New Container();
+    $containers = new Container();
     $errors = [];
     if($_SERVER['REQUEST_METHOD'] == "POST")
     {
       if ($containers->validate($_POST))
       {
-        $_POST['userId'] = Auth::getId();
+        $_POST['containerUserId'] = Auth::getUserId();
         $_POST['date'] = date('Y-m-d H:i:s');
         $containers->insert($_POST);
         message('Container Successfully Saved!');
@@ -61,7 +61,7 @@ class Containers extends Controller
       $this->redirect('login');
     }
     $errors = [];
-    $containers = New Container();
+    $containers = new Container();
     $row = $containers->first('id',$id);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")
@@ -89,7 +89,7 @@ class Containers extends Controller
       $this->redirect('login');
     }
     $errors = [];
-    $containers = New Container();
+    $containers = new Container();
     $row = $containers->first('id',$id);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")
