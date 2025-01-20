@@ -22,7 +22,7 @@
               <td> <?= $row->subTestCode ?> </td>
               <td> <?= $row->xtraTestName ?> </td>
               <td> <?= $row->xtraRefRanges ?> </td>
-              <td> <?= $row->unitRow->unitname ?> </td>
+              <td> <?= $row->unitInfo->unitname ?> </td>
               <td class="text-end ">
                 <!-- empty space -->
               </td>

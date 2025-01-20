@@ -154,10 +154,10 @@ class Tests extends Controller
           // show($xtraTest);die;
 
           // =======Looping All The Arrays Of The Input Names To Insert Into Database=============
-          $num = 1;
+          $num = 1; //to add numbers to $xtraTest['subTestCode'];
           for ($i=0; $i < count ($xtraTest['xtraTestName']); $i++)
           {
-            $subTestCode    =  $xtraTest['subTestCode'][$i].'-'.$num;
+            $subTestCode    =  $xtraTest['subTestCode'][$i].'-'.$num; //add - $num to $subTestCode;
             $xtraTestName   =  $xtraTest['xtraTestName'][$i];
             $xtraRefRanges  =  $xtraTest['xtraRefRanges'][$i];
             $xtraUnitid     =  $xtraTest['xtraUnitid'][$i];

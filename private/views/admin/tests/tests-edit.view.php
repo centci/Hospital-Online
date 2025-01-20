@@ -262,31 +262,7 @@
 </div><!--End container fluides -->
 
 <script>
-var tab = sessionStorage.getItem("tab") ? sessionStorage.getItem("tab") : "#profile-overview-tab";
 
-function show_tab(tab_name)
-{
-  const someTabTriggerEl = document.querySelector(tab_name + "-tab");
-  const tab = new bootstrap.Tab(someTabTriggerEl);
-  tab.show();
-}
-
-function set_tab(tab_name)
-{
-  tab = tab_name;
-  sessionStorage.setItem("tab", tab_name);
-}
-function load_image(file)
-{
-  document.querySelector(".js-filename").innerHTML = "Selected File: " + file.name;
-  var imglink = window.URL.createObjectURL(file);
-  document.querySelector(".js-image-preview").src = imglink;
-}
-
-window.onload = function ()
-{
-  show_tab(tab);
-}
 // send and receive data function
 function send_data(obj)
 {
