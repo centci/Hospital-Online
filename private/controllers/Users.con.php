@@ -42,6 +42,7 @@ class Users extends Controller
       if ($user->validate($_POST))
       {
         $_POST['date'] = date('Y-m-d H:i:s');
+        $_POST['userSaveBy'] = Auth::getUserId();
         $user->insert($_POST);
         message('You Have Successfully Registered User.');
       	$this->redirect("Users/users");
@@ -69,7 +70,7 @@ class Users extends Controller
     // Handle form submission
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && $row) {
         $folder = 'uploads/images/';
-
+// show($_POST);die;
         // Create directory if it doesn't exist
         if (!file_exists($folder)) {
             mkdir($folder, 0777, true);
@@ -111,6 +112,7 @@ class Users extends Controller
                     $this->errors['image'] = "Error, Couldn't Upload Image";
                 }
             }
+            show($_POST);die;
 
             // Update the user profile
             $user->update($id, $_POST);
@@ -123,10 +125,11 @@ class Users extends Controller
                 $arr['message'] = "Please correct these errors";
                 $arr['errors'] = $user->errors;
             }
+            // show($arr);die;
 
             echo json_encode($arr);
-            die();
         }
+        die();
     }
 
     // Load the profile view

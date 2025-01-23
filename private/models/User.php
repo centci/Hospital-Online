@@ -13,8 +13,8 @@ class User extends Model
     'username',
     'gender',
     'email',
-    'role',
-    'specialize',
+    'usersRoleId',
+    'usersSpecializeId',
     'image',
     'about',
     'company',
@@ -25,6 +25,7 @@ class User extends Model
     'facebooklink',
     'instagramlink',
     'linkedinlink',
+    'userSaveBy',
     'date',
     'password'
   ];
@@ -69,9 +70,13 @@ class User extends Model
       $this->errors['gender'] = "Gender Is Required!";
     }
     // validate Role
-    if (empty($DATA['role'])) {
-      $this->errors['role'] = "Role Is Required!";
+    if (empty($DATA['usersRoleId'])) {
+      $this->errors['usersRoleId'] = "Role Is Required!";
     }
+    // validate Specialization
+    // if (empty($DATA['usersSpecializeId'])) {
+    //   $this->errors['usersSpecializeId'] = "Specialization Is Required!";
+    // }
     // validate Country
     if (empty($DATA['country'])) {
       $this->errors['country'] = "Country Is Required!";
@@ -296,26 +301,46 @@ class User extends Model
     return $userData;
   }
 
-  // get user by id
+  // get user role by id
+  // ==========================================================================================
+  // COLLECT USER INFORMATION FROM ROLES TABLE
+  // get user information from $rows by usersRoleId, enriched with relational data
   public function getRoleById($rows)
   {
+    $result = $this->getRelatedData(
+      $rows,                  // The existing dataset
+      'roles',                // Related table name where we are looking for user information
+      'roleId',               // Column in `Roles` table
+      'usersRoleId',          // Column in $rows for matching one in roles table
+      ['roleId', 'role'],     // Fields to retrieve from the related/roles table
+      ['roleId', 'role'],     // Allowed fields to validate requested fields
+      'roleInfo',             // Key where related info will be attached
+      'ROL-'                  // prefix for userId here if needed, just incase database userId = 12 instead of USR-002
+    );
 
-    $db = new Database();
-    if (!empty($rows[0]->usersRoleId))
-    {
-      foreach ($rows as $key => $row)
-      {
-        $query = "SELECT role FROM roles WHERE roleId = :roleId LIMIT 1";
-        $role = $db->query($query,['roleId'=>$row->usersRoleId]);
-
-        if (!empty($role))
-        {
-          $rows[$key]->roleRow = $role[0];
-        }
-      }
-    }
-
-    return $rows;
+    return $result;
   }
+  // ==========================================================================================
+
+  // public function getRoleById($rows)
+  // {
+  //
+  //   $db = new Database();
+  //   if (!empty($rows[0]->usersRoleId))
+  //   {
+  //     foreach ($rows as $key => $row)
+  //     {
+  //       $query = "SELECT role FROM roles WHERE roleId = :roleId LIMIT 1";
+  //       $role = $db->query($query,['roleId'=>$row->usersRoleId]);
+  //
+  //       if (!empty($role))
+  //       {
+  //         $rows[$key]->roleRow = $role[0];
+  //       }
+  //     }
+  //   }
+  //
+  //   return $rows;
+  // }
 
 }

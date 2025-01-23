@@ -64,38 +64,38 @@
     <div class="col-md-4">
       <div class="input-group">
         <select
-          class="form-select form-select <?= isset($errors['role']) ? 'border-danger' : 'border-primary'; ?>" name="role">
+          class="form-select form-select <?= isset($errors['usersRoleId']) ? 'border-danger' : 'border-primary'; ?>" name="usersRoleId">
           <!-- Default option -->
-          <option <?= get_select('role', '') ?> value="">Select Role</option>
+          <option <?= get_select('usersRoleId', '') ?> value="">Select Role</option>
           <!-- Options populated from the database -->
           <?php if ($roleRow): ?>
             <?php foreach ($roleRow as $role): ?>
-                <option <?= get_select("role", $role->roleId) ?> value="<?= $role->roleId ?>"> <?= $role->role ?> </option>
+                <option <?= get_select("usersRoleId", $role->roleId) ?> value="<?= $role->roleId ?>"> <?= $role->role ?> </option>
             <?php endforeach; ?>
           <?php endif; ?>
         </select>
       </div>
       <small class="text-danger">
-      <?php if (isset($errors['role'])): ?> <?= $errors['role']?> <?php endif; ?>
+      <?php if (isset($errors['usersRoleId'])): ?> <?= $errors['usersRoleId']?> <?php endif; ?>
       </small>
     </div>
 
     <div class="col-md-4">
       <div class="input-group">
         <select
-          class="form-select form-select <?= isset($errors['specialize']) ? 'border-danger' : 'border-primary'; ?>" name="specialize">
+          class="form-select form-select <?= isset($errors['usersSpecializeId']) ? 'border-danger' : 'border-primary'; ?>" name="usersSpecializeId">
           <!-- Default option -->
-          <option <?= get_select('specialize', '') ?> value="">Select Role</option>
+          <option <?= get_select('usersSpecializeId', '') ?> value="">Select Specialization</option>
           <!-- Options populated from the database -->
           <?php if ($specializeRow): ?>
             <?php foreach ($specializeRow as $specialize): ?>
-                <option <?= get_select("specialize", $specialize->specializeId) ?> value="<?= $specialize->specializeId ?>"> <?= $specialize->specialized ?> </option>
+                <option <?= get_select("usersSpecializeId", $specialize->specializeId) ?> value="<?= $specialize->specializeId ?>"> <?= $specialize->specialized ?> </option>
             <?php endforeach; ?>
           <?php endif; ?>
         </select>
       </div>
       <small class="text-danger">
-      <?php if (isset($errors['specialize'])): ?> <?= $errors['specialize']?> <?php endif; ?>
+      <?php if (isset($errors['usersSpecializeId'])): ?> <?= $errors['usersSpecializeId']?> <?php endif; ?>
       </small>
     </div>
 
