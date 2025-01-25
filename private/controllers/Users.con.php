@@ -61,76 +61,71 @@ class Users extends Controller
     if (!Auth::logged_in()) {
         $this->redirect('login');
     }
-
+    $errors = [];
     $user = new User();
     $title = "Profile";
     $id = $id ?? Auth::getUserId();
     $row = $user->first('id', $id);
 
     // Handle form submission
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && $row) {
-        $folder = 'uploads/images/';
-// show($_POST);die;
-        // Create directory if it doesn't exist
-        if (!file_exists($folder)) {
-            mkdir($folder, 0777, true);
-            file_put_contents($folder . "index.php", "<?php //silence");
-            file_put_contents("uploads/index.php", "<?php //silence");
-        }
+    if($_SERVER['REQUEST_METHOD'] == "POST" && $row)
+		{
 
-        // Validate user input
-        if ($user->edit_validate($_POST, $id)) {
-            $allowedFiles = ['image/jpeg', 'image/png'];
+			$folder = "uploads/images/";
+			if(!file_exists($folder))
+			{
+				mkdir($folder,0777,true);
+				file_put_contents($folder."index.php", "<?php //silence");
+				file_put_contents("uploads/index.php", "<?php //silence");
+			}
 
-            // Check if an image file was uploaded
-            if (!empty($_FILES['image']['name'])) {
-                if ($_FILES['image']['error'] == 0) {
-                    // Validate file type
-                    if (in_array($_FILES['image']['type'], $allowedFiles)) {
-                        $destination = $folder . time() . "_" . basename($_FILES['image']['name']);
-                        // Move the uploaded file
-                        if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
-                            // Resize the image now
-                            if (resize_image($destination) === false) {
-                                // Handle error in resizing
-                                $this->errors['image'] = "Error resizing the image.";
-                            } else {
-                                $_POST['image'] = $destination;
+ 			if($user->edit_validate($_POST,$id))
+ 			{
 
-                                // Remove old image if it exists
-                                if (file_exists($row->image)) {
-                                    unlink($row->image);
-                                }
-                            }
-                        } else {
-                            $this->errors['image'] = "Failed to move the uploaded file.";
-                        }
-                    } else {
-                        $this->errors['image'] = "This File Type Is Not Allowed";
-                    }
-                } else {
-                    $this->errors['image'] = "Error, Couldn't Upload Image";
-                }
-            }
-            show($_POST);die;
+				$allowed = ['image/jpeg','image/png'];
 
-            // Update the user profile
-            $user->update($id, $_POST);
+				if(!empty($_FILES['image']['name'])){
 
-            // Prepare JSON response
-            $arr = [];
-            if (empty($user->errors)) {
-                $arr['message'] = "Profile Updated Successfully";
-            } else {
-                $arr['message'] = "Please correct these errors";
-                $arr['errors'] = $user->errors;
-            }
-            // show($arr);die;
+					if($_FILES['image']['error'] == 0){
 
-            echo json_encode($arr);
-        }
-        die();
-    }
+						if(in_array($_FILES['image']['type'], $allowed))
+						{
+							//everything good
+							$destination = $folder.time().$_FILES['image']['name'];
+							move_uploaded_file($_FILES['image']['tmp_name'], $destination);
+
+							resize_image($destination);
+							$_POST['image'] = $destination;
+							if(file_exists($row->image))
+							{
+								unlink($row->image);
+							}
+
+						}else{
+							$user->errors['image'] = "This file type is not allowed";
+						}
+					}else{
+						$user->errors['image'] = "Could not upload image";
+					}
+				}
+// show($user->errors);die;
+				$user->update($id,$_POST);
+
+				//message("Profile saved successfully");
+				//redirect('admin/profile/'.$id);
+ 			}
+
+			if(empty($user->errors)){
+				$arr['message'] = "Profile saved successfully";
+			}else{
+				$arr['message'] = "Please correct these errors";
+				$arr['errors'] = $user->errors;
+			}
+
+			echo json_encode($arr);
+
+ 			die;
+		}
 
     // Load the profile view
     require $this->viewsPath("admin/users/profile");
