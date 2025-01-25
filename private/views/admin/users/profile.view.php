@@ -506,7 +506,7 @@
 
   function handle_result(result)
   {
-    console.log(result);
+    // console.log(result);
     var obj = JSON.parse(result);
     if (typeof obj == 'object')
     {

@@ -108,7 +108,7 @@ class Users extends Controller
 						$user->errors['image'] = "Could not upload image";
 					}
 				}
-// show($user->errors);die;
+
 				$user->update($id,$_POST);
 
 				//message("Profile saved successfully");

@@ -109,7 +109,7 @@ function resize_image($filename, $max_size = 700)
         default:
             return false; // Return false for unsupported formats
     }
-
+    
     $src_w = imagesx($image);
     $src_h = imagesy($image);
 
