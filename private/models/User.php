@@ -321,26 +321,4 @@ class User extends Model
     return $result;
   }
   // ==========================================================================================
-
-  // public function getRoleById($rows)
-  // {
-  //
-  //   $db = new Database();
-  //   if (!empty($rows[0]->usersRoleId))
-  //   {
-  //     foreach ($rows as $key => $row)
-  //     {
-  //       $query = "SELECT role FROM roles WHERE roleId = :roleId LIMIT 1";
-  //       $role = $db->query($query,['roleId'=>$row->usersRoleId]);
-  //
-  //       if (!empty($role))
-  //       {
-  //         $rows[$key]->roleRow = $role[0];
-  //       }
-  //     }
-  //   }
-  //
-  //   return $rows;
-  // }
-
 }

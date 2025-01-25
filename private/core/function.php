@@ -85,70 +85,114 @@ function num_date($date)
 {
 	return date("j-m-Y", strtotime($date));
 }
-// crop image function
+
+// Function to resize an image to a specified maximum dimension (e.g., 700px)
 function resize_image($filename, $max_size = 700)
 {
-    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-
+    // First, check if the file exists to avoid errors
     if (!file_exists($filename)) {
         return false; // Return false if the file does not exist
     }
 
-    // Create image from file based on extension
+    // Extract the file extension in lowercase for processing
+    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+    // Determine the appropriate image creation function based on the file type
     switch ($ext) {
         case 'png':
-            $image = imagecreatefrompng($filename);
+            $image = imagecreatefrompng($filename); // For PNG images
             break;
         case 'gif':
-            $image = imagecreatefromgif($filename);
+            $image = imagecreatefromgif($filename); // For GIF images
             break;
-        case 'jpg':
+        case 'jpg': // For JPG images
         case 'jpeg':
             $image = imagecreatefromjpeg($filename);
             break;
         default:
-            return false; // Return false for unsupported formats
+            return false; // Return false for unsupported file formats
     }
-    
-    $src_w = imagesx($image);
-    $src_h = imagesy($image);
 
-    // Calculate dimensions for the resized image
+    // Get the original width and height of the image
+    $src_w = imagesx($image); // Source width
+    $src_h = imagesy($image); // Source height
+
+    // Calculate the dimensions for the resized image based on the aspect ratio
     if ($src_w > $src_h) {
+        // Landscape orientation: Keep width at max_size and scale height proportionally
         $dst_w = $max_size;
         $dst_h = ($src_h / $src_w) * $max_size;
     } else {
+        // Portrait or square orientation: Keep height at max_size and scale width proportionally
         $dst_h = $max_size;
         $dst_w = ($src_w / $src_h) * $max_size;
     }
 
-    // Create a new true color image with the calculated dimensions
+    // Create a new blank image with the desired dimensions
     $dst_image = imagecreatetruecolor($dst_w, $dst_h);
+
+    // Resize and copy the original image into the blank image
     imagecopyresampled($dst_image, $image, 0, 0, 0, 0, $dst_w, $dst_h, $src_w, $src_h);
 
-    // Output the image to the original file
+    // Overwrite the original file with the resized image based on its file type
     switch ($ext) {
         case 'png':
-            imagepng($dst_image, $filename);
+            imagepng($dst_image, $filename); // Save resized PNG
             break;
         case 'gif':
-            imagegif($dst_image, $filename);
+            imagegif($dst_image, $filename); // Save resized GIF
             break;
-        case 'jpg':
+        case 'jpg': // Save resized JPG
         case 'jpeg':
-            imagejpeg($dst_image, $filename, 70);
+            imagejpeg($dst_image, $filename, 70); // 70 is the JPEG quality level
             break;
     }
 
-    // Free memory
-    imagedestroy($image);
-    imagedestroy($dst_image);
+    // Free up memory used by the images
+    imagedestroy($image);      // Destroy the original image resource
+    imagedestroy($dst_image); // Destroy the resized image resource
 
-    return $filename; // Return the filename on success
+    return $filename; // Return the path to the resized image
 }
 
+// Function to get the appropriate image based on gender and file existence
+function get_image($image, $gender = 'male')
+{
+    // Define paths to the default images for male and female users
+    $female_image = ROOT . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'user_female.jpg';
+    $male_image = ROOT . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'user_male.jpg';
 
-//function to Make Randome String ID
+    // Check if the provided image file exists
+    if (!file_exists($image)) {
+        // If image does not exist, provide default image based on gender
+        if ($gender === 'male') {
+            $image = $male_image; // Set the default male image
+        } else {
+            $image = $female_image; // Set the default female image
+        }
+    } else {
+        // If the image exists, resize it
+        $resized_image = resize_image($image);
+        if ($resized_image) {
+            // If the resize is successful, set the resized image path
+            $image = ROOT . DIRECTORY_SEPARATOR . $resized_image;
+        }
+    }
+
+    // Normalize the file path to use forward slashes for consistency
+    return str_replace('\\', '/', $image);
+}
+
+/**********************************************************************************
+* function to  Remove Special Char Including Numbers and spaces from an array      *
+* Note: if you dont want any character not to be removed, add it within the [...]  *
+***********************************************************************************/
+function RemoveSpecialChar($array)
+{
+  $res = preg_replace('/[^a-zA-Z]+$/','',$array);
+  return $res;
+}
+//function to Make Randome String/Numbers ID(you can add A,B,C,D,E,F,G,......if you want numbers mix with letters and vise vasa)
 function random_string($length)
 {
   $array = array(0,1,2,3,4,5,6,7,8,9);
@@ -161,35 +205,6 @@ function random_string($length)
 
   return $text;
 }
-
-// function to change image acording to gender
-function get_image($image, $gender = 'male')
-{
-  if (!file_exists($image))
-	{
-    $image = ROOT.'/assets/images/user_female.jpg';
-    if ($gender == 'male')
-		{
-      $image = ROOT.'/assets/images/user_male.jpg';
-    }
-  }
-	else
-	{
-		$image = ROOT . '/' . resize_image($image);
-	}
-  return $image;
-}
-
-/**********************************************************************************
-* function to  Remove Special Char Including Numbers and spaces from an array      *
-* Note: if you dont want any character not to be removed, add it within the [...]  *
-***********************************************************************************/
-function RemoveSpecialChar($array)
-{
-  $res = preg_replace('/[^a-zA-Z]+$/','',$array);
-  return $res;
-}
-
 // make subtest code
 function make_subTestCode($testCode)
 {
